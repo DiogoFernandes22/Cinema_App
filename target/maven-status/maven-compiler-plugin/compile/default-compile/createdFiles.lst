@@ -1,6 +1,8 @@
 com\mycompany\movie\Room.class
 com\mycompany\movie\Ticket.class
 com\mycompany\movie\Movie.class
+com\mycompany\cinema\HomeController.class
+com\mycompany\cinema\CinemaApplication.class
 com\mycompany\movie\Reservation.class
 com\mycompany\movie\Main.class
 com\mycompany\movie\Session.class

@@ -1,0 +1,107 @@
+.navbar{
+  height: 80px;  
+  background-color: #0b0b0b;
+  /* flex para colocar tudo em linha, dessa divisão, partindo da direita */
+  display: flex;
+  /* para não ficarem encostados à direita */
+  align-items: center; 
+  /* Distrbui o espaço disponível entre estes três elementos */
+  justify-content: space-between;
+  /*Para dar espaço entre as margens da esquerda e direita, assim não ficam coladas ao canto do site. 0 é o top e 7 é o left/right*/
+  padding: 0 7%;
+}
+
+.logo{
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 3px;
+}
+/*O nav controla a organização dos links*/
+nav{
+    display: flex;
+    /*espaço entre os links*/
+    gap: 35px;
+}
+
+nav a{
+    color: #aaa;
+    /*Para não ter aquala cor azul e sunlinhado dos links*/
+    text-decoration: none;
+    font-size: 15px;
+}
+/*Condição para o nav, quando o rato estiver por cima*/
+nav a:hover{
+    color: white;
+}
+
+.login-button{
+    background: transparent;
+    color: white;
+    /*1px espessura de linha, solid tipo de linha, #555 cor*/ 
+    border: 1px solid #555;
+    /*Cima/Baixo e Esquerda/Direita*/
+    padding: 10px 20px;
+    /*Para indicar que dá para clicar*/
+    cursor: pointer;
+}
+/*Condição para o Entrar, quando o rato estiver por cima*/
+.login-button:hover{
+    background: white;
+    color: black;
+    
+}
+
+.hero{
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    padding: 80px 7%;
+    /*Tem dois gradientes que na declaração estão deparados por ","*/
+    background: linear-gradient( 90deg,#0b0b0b 20%,rgba(11,11,11,0.8) 50%,rgba(11,11,11,0.2)), 
+        linear-gradient(135deg,#18251c,#345c43,#111);
+}
+
+.hero-content{
+    max-width: 550px;
+}
+
+.small-title{
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: #aaa;
+}
+
+.hero h1{
+    font-size: 80px;
+    letter-spacing: 5px;
+    margin: 10px 0;
+    color: white;
+}
+
+.description{
+    color: #ccc;
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.movie-info{
+    /*para ficarem lado a lado*/
+    display: flex;
+    gap: 20px;
+    color: #aaa;
+}
+
+.primary-button{
+    background: white;
+    color: black;
+    border: none;
+    padding: 14px 28px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.primary-button:hover{
+    background: black;
+    color: white;
+}
