@@ -105,3 +105,50 @@ nav a:hover{
     background: black;
     color: white;
 }
+
+.section{
+    padding: 80px 7%;
+    background-color: #0b0b0b;
+}
+
+.section-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
+
+.section-header h2{
+    font-size: 36px;
+    margin: 5px 0;
+}
+
+.section-label{
+    color: #888;
+    font-size: 12px;
+    letter-spacing: 3px;
+}
+
+.section-header a{
+    color: #aaa;
+    text-decoration: none;
+}
+
+.movies{
+    display: grid;
+    /*Cria três colunas iguais*/
+    grid-template-columns: repeat(3, 1fr);
+    /*Espaço entre os cartões*/
+    gap: 25px;
+}
+
+.movie-card{
+    background-color: #151515;
+}
+
+.poster{
+    height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg,#333,#111);
+}
