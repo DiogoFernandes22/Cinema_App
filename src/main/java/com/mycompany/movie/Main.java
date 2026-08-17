@@ -38,5 +38,15 @@ public class Main {
 
         // Começar a escolher lugares
         reservation.chooseSeat();
+        
+        System.out.println("Reserva pertence a: " + reservation.getUser());
+        
+        for(Ticket ticket : reservation.getMyTickets()){
+        System.out.println(
+        ticket.getSeat() + " - " +
+        ticket.getTypeTicket() + " - " +
+        ticket.ticketPrice() + "€"
+    );
+        }
     }
     }

@@ -216,4 +216,11 @@ public class Reservation {
         }
         return total;
     }
+    public User getUser(){
+        return user;
+    }
+    //Poder consultar os bilhetes que pertencem àquela reserva
+    public ArrayList<Ticket> getMyTickets(){
+        return myTickets;
+    }
 }
