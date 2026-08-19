@@ -72,4 +72,8 @@ public class Room {
     return seats;
 }
     
+    public String getType(){
+        return type;
+    }
+    
 }

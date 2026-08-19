@@ -62,4 +62,12 @@ public class Session {
     public Room getRoom(){
         return room;
     }
+    
+    public Movie getMovie(){
+        return movie;
+    }
+    
+    public LocalTime getTime(){
+        return time;
+    }
 }

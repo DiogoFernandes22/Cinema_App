@@ -37,9 +37,9 @@
         
         <div class="movie-info">
             <!--Usa-se span para a informação estar na mesma linha, em vez de cada um estar numa linha diferente-->
-            <span>2009</span>
-            <span>162 min</span>
-            <span>Ficção Científica</span>
+            <span th:text="${movie.releaseDate}">2009</span>
+            <span th:text="${movie.duration + ' min'}">162 min</span>
+            <span th:text="${movie.genre}">Ficção Científica</span>
         </div>
             <button class="primary-button">Ver sessões</button>
         </div>
@@ -53,28 +53,55 @@
                 <h2>Agora em exibição</h2>
             </div>
             
-            <a href="#verTodos">Ver todos</a>
+            <a href="#">Ver todos</a>
             
         </div>
         
         <div class="movies">
             
-            <div class="movie-card">
+            <div class="movie-card" th:each="movie : ${movies}">
                 
-                <div class="poster">AVATAR</div>
+                <div class="poster" th:text="${movie.name}">AVATAR</div>
                 
                 <div class="movie-card-info">
-                    <h3>Avatar</h3>
-                    <p>Ficção Científica</p>
+                    <h3 th:text="${movie.name}">Avatar</h3>
+                    <p th:text="${movie.genre}">Ficção Científica</p>
+                    <p th:text="${'Avaliação: ' + movie.rate}">Avaliação: 7.8</p>
                     <button class="secondary-button">Ver sessões</button>
                 </div>
                 
-            </div>
-             <div class="movie-card"></div>
-              <div class="movie-card"></div>
-            
+            </div>     
         </div>
     </section>
+    
+    <section id="sessoes" class="sessions-section">
+        
+        <div class="section-header">
+            <div>
+                <p class="section-label">HOJE</p>
+                <h2>Sessões</h2>
+            </div>
+        </div>
+        
+        <div class="session">
+            <div>
+                <h3 th:text="${movieSession.movie.name}">Avatar</h3>
+                <p th:text="${'Sala ' + movieSession.room.type}">Sala NORMAL</p>
+            </div>
+            
+            <div class="session-times">
+                <button>18:00</button>
+                <button th:text="${movieSession.time}">21:00</button>
+                <button>23:30</button>
+            </div>
+        </div>
+        
+    </section>
+    
+    <footer>
+        <div class="logo">CINEHUB</div>
+        <p>Uma experiência cinematográfica</p>
+    </footer>
 
 </body>
 </html>
