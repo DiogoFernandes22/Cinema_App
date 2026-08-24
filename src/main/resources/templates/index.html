@@ -87,12 +87,17 @@
             <div>
                 <h3 th:text="${movieSession.movie.name}">Avatar</h3>
                 <p th:text="${'Sala ' + movieSession.room.type}">Sala NORMAL</p>
+                <p th:text="${'Hora: ' + movieSession.time}">Hora: 21:00</p>
             </div>
             
             <div class="session-times">
-                <button>18:00</button>
-                <button th:text="${movieSession.time}">21:00</button>
-                <button>23:30</button>
+                
+                <form th:each="currentSession : ${sessions}" th:action="@{/session}" method="get">
+                <!-- currentSession é a declarar a variável e o sessions é a lista que vem do java -->
+                <button type="submit" name="time" th:text="${currentSession.time}" th:value="${currentSession.time}">
+            21:00 </button>
+                </form>
+            
             </div>
         </div>
         

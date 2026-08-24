@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CineHub - Lugares</title>
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <div class="logo">
+            CINEHUB
+        </div>
+
+        <nav>
+            <a href="/">Filmes</a>
+            <a href="/">Sessões</a>
+            <a href="/">O Cinema</a>
+        </nav>
+
+        <button class="login-button">
+            Entrar
+        </button>
+
+    </header>
+
+
+    <main class="section">
+
+        <div class="section-header">
+
+            <div>
+                <p class="section-label">LUGARES</p>
+
+                <h2>Escolher lugares</h2>
+            </div>
+
+        </div>
+
+
+        <!-- Informação da sessão -->
+
+        <div class="session">
+
+            <div>
+
+                <h3 th:text="${movieSession.movie.name}">
+                    Avatar
+                </h3>
+
+                <p th:text="${'Sala ' + movieSession.room.type}">
+                    Sala NORMAL
+                </p>
+
+                <p th:text="${'Hora: ' + movieSession.time}">
+                    Hora: 21:00
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Informação dos bilhetes -->
+
+        <div>
+
+            <h2>Bilhetes</h2>
+
+            <p th:text="${'Normal: ' + normal}">
+                Normal: 0
+            </p>
+
+            <p th:text="${'Estudante: ' + estudante}">
+                Estudante: 0
+            </p>
+
+            <p th:text="${'Criança: ' + crianca}">
+                Criança: 0
+            </p>
+
+        </div>
+
+
+        <!-- Lugares -->
+
+        <div>
+
+            <h2>Escolha os seus lugares</h2>
+            
+            <p>Lugares a escolher:
+                <span id="totalSeats" th:text="${normal + estudante + crianca}"> 0 </span>
+            </p>
+
+            <div class="seats">
+
+                <!-- Percorrer as filas -->
+
+                <div th:each="row : ${movieSession.room.GetSeats()}">
+
+                    <!-- Percorrer os lugares de cada fila -->
+
+                    <button
+                        th:each="seat : ${row}"
+                        type="button"
+                        class="seat-button"
+                        th:text="${seat}"
+                        th:attr="data-seat=${seat}">
+                        A1
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+        
+        <form id="seatForm" action="/reserve" method="get">
+
+    <input type="hidden" name="time" th:value="${movieSession.time}">
+
+    <input type="hidden" name="seats" id="selectedSeats">
+
+    <button type="submit">
+        Confirmar lugares
+    </button>
+
+        </form>
+
+    </main>
+
+
+    <footer>
+
+        <div class="logo">
+            CINEHUB
+        </div>
+
+        <p>
+            Uma experiência cinematográfica
+        </p>
+
+    </footer>
+    <!--Se o utilizador comprou 3 bilhetes, indica lugares a escolher: 3, se clicar A1 [A1] fica selecionado. Depois escolhe os restantes lugares e os três ficam selecionados. Se clicar num lugar a mais, recebe a mensagem: "Já selecionou todos os lugares necessários". Se voltar a clicar num lugar já escolhido, este é removido e pode escolher outro--> 
+    <script>
+        const seatButtons = document.querySelectorAll(".seat-button");
+        
+        const totalSeats = parseInt(document.getElementById("totalSeats").textContent);
+        
+        let selectedSeats = [];
+        
+        seatButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                const seat = this.dataset.seat;
+                
+                //Se o lugar já está selecionado
+                if (selectedSeats.includes(seat)){
+                    //Retirar o lugar da lista
+                    selectedSeats = selectedSeats.filter(selectedSeat => selectedSeat !== seat);
+                    //Retirar o aspeto de selecionado
+                    this.classList.remove("selected");
+                }
+                else{
+                    //Verificar se já atingiu o número máximo
+                    if (selectedSeats.length >= totalSeats){
+                        alert("Já selecionou todos os lugares necessários");
+                        return;
+                    }
+                    //Adicionar o lugar
+                    selectedSeats.push(seat);
+                    
+                    //Alterar o aspeto
+                    this.classList.add("selected");
+                }
+                //Atualizar o input hidden
+                document.getElementById("selectedSeats").value = selectedSeats.join(",");
+                
+                console.log("Lugares selecionados:", selectedSeats);
+            });
+        });
+    </script>
+
+</body>
+</html>

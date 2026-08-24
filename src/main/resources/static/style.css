@@ -244,6 +244,17 @@ footer{
     color: #777;
 }
 
+.seat-button {
+    margin: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.seat-button.selected{
+    background-color: #f5c518;
+    color: black;
+}
+
 @media (max-width: 768px){
     .navbar{
         padding: 0 5%;

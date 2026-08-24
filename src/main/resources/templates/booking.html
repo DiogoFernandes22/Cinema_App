@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CineHub - Compra</title>
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="logo">
+            CINEHUB
+        </div>
+
+        <nav>
+            <a href="/">Filmes</a>
+            <a href="/">Sessões</a>
+            <a href="/">O Cinema</a>
+        </nav>
+
+        <button class="login-button">
+            Entrar
+        </button>
+    </header>
+
+    <main class="section">
+
+        <div class="section-header">
+            <div>
+                <p class="section-label">COMPRA</p>
+                <h2>Escolher bilhetes</h2>
+            </div>
+        </div>
+
+        <div class="session">
+
+            <div>
+                <h3 th:text="${movieSession.movie.name}">
+                    Avatar
+                </h3>
+
+                <p th:text="${'Sala ' + movieSession.room.type}">
+                    Sala NORMAL
+                </p>
+
+                <p th:text="${'Hora: ' + movieSession.time}">
+                    Hora: 21:00
+                </p>
+            </div>
+
+        </div>
+
+        <h2>Tipo de bilhete</h2>
+        <!-- action é para onde os dados serão enviados e o method como são enviados -->
+        <form action="/tickets" method="get">
+            <input type="hidden" name="time" th:value="${movieSession.time}">
+            <label> 
+                Normal - 8€
+                <!-- Quando o formulário for enviado o browser precisa de saber como se chama o valor que está a enviar. Se o utilizador escolher 2 o pedido fica normal=2 -->
+                <input type="number" name="normal" value="0" min="0">
+            </label>
+            <label>
+                Estudante - 6€
+                <input type="number" name="estudante" value="0" min="0">
+            </label>
+            <label>
+                Criança - 4,50€
+                <input type="number" name="crianca" value="0" min="0">
+            </label>
+            <button type="submit">Escolher lugares</button>
+        </form>
+
+    </main>
+
+    <footer>
+        <div class="logo">CINEHUB</div>
+        <p>Uma experiência cinematográfica</p>
+    </footer>
+
+</body>
+</html>
