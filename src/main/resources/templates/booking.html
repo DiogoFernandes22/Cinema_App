@@ -53,25 +53,46 @@
             </div>
 
         </div>
-
+        
+        <form id="bookingForm" action="/reserve" method="get">
+            
+            <!-- Sessão escolhida -->
+            <input type="hidden" name="time" th:value="${movieSession.time}">
+            
         <h2>Tipo de bilhete</h2>
         <!-- action é para onde os dados serão enviados e o method como são enviados -->
-        <form action="/tickets" method="get">
-            <input type="hidden" name="time" th:value="${movieSession.time}">
+          
             <label> 
                 Normal - 8€
                 <!-- Quando o formulário for enviado o browser precisa de saber como se chama o valor que está a enviar. Se o utilizador escolher 2 o pedido fica normal=2 -->
-                <input type="number" name="normal" value="0" min="0">
+                <input type="number" name="normal" value="0" min="0" id="normal">
             </label>
             <label>
                 Estudante - 6€
-                <input type="number" name="estudante" value="0" min="0">
+                <input type="number" name="estudante" value="0" min="0" id="estudante">
             </label>
             <label>
                 Criança - 4,50€
-                <input type="number" name="crianca" value="0" min="0">
+                <input type="number" name="crianca" value="0" min="0" id="crianca">
             </label>
-            <button type="submit">Escolher lugares</button>
+            
+        <h2>Escolher lugares </h2>
+        
+        <p>Lugares a escolher: <span id="totalSeats">0</span></p>
+        
+        <div class="seats">
+            
+            <div th:each="row : ${movieSession.room.GetSeats()}">
+                
+                <button th:each="seat : ${row}" type="button" class="seat-button" th:text="${seat}" th:attr="data-seat=${seat}">A1</button>
+                
+            </div>
+        </div>
+        
+        <!-- Aqui ficam guardados os lugares escolhidos -->
+        <input type="hidden" name="seats" id="selectedSeats">
+        
+        <button type="submit">Confirmar compra</button>
         </form>
 
     </main>
@@ -80,6 +101,92 @@
         <div class="logo">CINEHUB</div>
         <p>Uma experiência cinematográfica</p>
     </footer>
+    
+    <script>
+        const normalInput = document.getElementById("normal");
+        const estudanteInput = document.getElementById("estudante");
+        const criancaInput = document.getElementById("crianca");
+        
+        const totalSeatsElement = document.getElementById("totalSeats");
+        const selectedSeatsInput = document.getElementById("selectedSeats");
+        
+        const seatButtons = document.querySelectorAll(".seat-button");
+        
+        let selectedSeats = [];
+        
+        function updateTotalSeats(){
+            
+            const normal = parseInt(normalInput.value) || 0;
+            const estudante = parseInt(estudanteInput.value) || 0;
+            const crianca = parseInt(criancaInput.value) || 0;
+            
+            const total = normal + estudante + crianca;
+            
+            totalSeatsElement.textContent = total;
+            
+            //Se o número de bilhetes diminuir, retirar lugares que já não são necessários
+            if(selectedSeats.length > total){
+                
+                selectedSeats = selectedSeats.slice(0, total);
+                
+                seatButtons.forEach(button => {
+                    
+                    if(!selectedSeats.includes(button.dataset.seat)){
+                        button.classList.remove("selected");
+                    }
+                });
+                
+                selectedSeatsInput.value = selectedSeats.join(",");
+            }
+        }
+        
+        normalInput.addEventListener("input", updateTotalSeats);
+        estudanteInput.addEventListener("input", updateTotalSeats);
+        criancaInput.addEventListener("input", updateTotalSeats);
+        
+        seatButtons.forEach(button => {
+            
+            button.addEventListener("click", function() {
+                
+                const seat = this.dataset.seat;
+                
+                //se o lugar já está selecionado
+                if(selectedSeats.includes(seat)) {
+                    
+                    selectedSeats = selectedSeats.filter(
+                            selectedSeat => selectedSeat !== seat);
+                    
+                    this.classList.remove("selected");
+                }
+                
+                else{
+                    
+                    const totalSeats = parseInt(totalSeatsElement.textContent);
+                    
+                    //Não existem bilhetes selecionados
+                    if(totalSeats === 0){
+                        alert("Escolha primeiro o número de bilhetes.");
+                        return;
+                    }
+                    
+                    if(selectedSeats.length >= totalSeats){
+                        alert("Já selecionou todos os lugares necessários");
+                        return;
+                    }
+                    
+                    //Adicionar lugar
+                    selectedSeats.push(seat);
+                    
+                    this.classList.add("selected");
+                }
+                
+                //Atualizar input hidden
+                selectedSeatsInput.value = selectedSeats.join(",");
+                
+                console.log("Lugares selecionados:", selectedSeats);
+            });
+        });
+        </script>
 
 </body>
 </html>

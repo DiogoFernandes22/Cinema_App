@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CineHub - Confirmação</title>
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <div class="logo">
+            CINEHUB
+        </div>
+
+        <nav>
+            <a href="/">Filmes</a>
+            <a href="/">Sessões</a>
+            <a href="/">O Cinema</a>
+        </nav>
+
+        <button class="login-button">
+            Entrar
+        </button>
+
+    </header>
+
+
+    <main class="section">
+
+        <div class="section-header">
+
+            <div>
+                <p class="section-label">CONFIRMAÇÃO</p>
+
+                <h2>Rever compra</h2>
+            </div>
+
+        </div>
+
+
+        <!-- Informação da sessão -->
+
+        <div class="session">
+
+            <div>
+
+                <h3 th:text="${reservation.session.movie.name}">
+                    Avatar
+                </h3>
+
+                <p th:text="${'Sala ' + reservation.session.room.type}">
+                    Sala NORMAL
+                </p>
+
+                <p th:text="${'Hora: ' + reservation.session.time}">
+                    Hora: 21:00
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Bilhetes -->
+
+        <div>
+
+            <h2>Bilhetes</h2>
+
+            <div th:each="ticket : ${reservation.myTickets}">
+
+                <p th:text="${ticket.typeTicket + ' - ' + ticket.ticketPrice() + '€'}">
+                    NORMAL - 8€
+                </p>
+
+                <p th:text="${'Lugar: ' + ticket.seat}">
+                    Lugar: A1
+                </p>
+
+            </div>
+
+            <p>
+                <strong>
+                    Preço total:
+                    <span th:text="${reservation.totalPrice() + '€'}">
+                        8€
+                    </span>
+                </strong>
+            </p>
+
+        </div>
+
+
+        <!-- Botão -->
+
+        <form action="/confirm" method="get">
+
+            <button type="submit">
+                Confirmar compra
+            </button>
+
+        </form>
+
+    </main>
+
+
+    <footer>
+
+        <div class="logo">
+            CINEHUB
+        </div>
+
+        <p>
+            Uma experiência cinematográfica
+        </p>
+
+    </footer>
+
+</body>
+</html>

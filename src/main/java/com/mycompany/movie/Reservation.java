@@ -223,4 +223,32 @@ public class Reservation {
     public ArrayList<Ticket> getMyTickets(){
         return myTickets;
     }
+    //Para podermos criar uma reserva a partir do site sem utilizar o scanner
+    public void addTicket(String typeTicket, Seat seat){
+        
+        Ticket ticket = new Ticket(typeTicket, seat);
+        
+        myTickets.add(ticket);
+        mySeats.add(seat);
+        
+    }
+    
+    public void setConfirmed(boolean confirmed){
+        this.confirmed = confirmed;
+    }
+    
+    public boolean isConfirmed(){
+        return confirmed;
+    }
+    
+    //Pode ser útil, mas pode não ser necessário
+    public Session getSession(){
+        return session;
+    }
+    // Pode não ser necessário
+    public ArrayList<Seat> getMySeats(){
+        return mySeats;
+    }
+    
+    
 }
