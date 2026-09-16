@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CineHub - Compra Confirmada</title>
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <div class="logo">
+            CINEHUB
+        </div>
+
+        <nav>
+            <a href="/">Filmes</a>
+            <a href="/">Sessões</a>
+            <a href="/">O Cinema</a>
+        </nav>
+
+        <button class="login-button">
+            Entrar
+        </button>
+
+    </header>
+
+    <main class="section">
+
+        <p class="section-label">CONFIRMAÇÃO</p>
+
+        <h2>Compra confirmada!</h2>
+
+        <p>A sua reserva foi confirmada com sucesso.</p>
+
+        <p>
+            <strong>Estado do pagamento:</strong>
+            
+            <span th:if="${reservation.paid}">
+                Pago
+            </span>
+            
+            <span th:unless="${reservation.paid}">
+                Por pagar
+            </span>
+        </p>
+        
+        <p>
+            <strong>Método de pagamento</strong>
+            <span th:text="${reservation.paymentMethod}">MB WAY</span>
+        </p>
+
+        <h3>Bilhetes</h3>
+
+        <div th:each="ticket : ${reservation.myTickets}">
+
+            <p th:text="${ticket.typeTicket + ' - ' + ticket.ticketPrice() + '€'}">
+                NORMAL - 8€
+            </p>
+
+            <p th:text="${'Lugar: ' + ticket.seat}">
+                Lugar: A1
+            </p>
+
+        </div>
+
+        <p>
+            <strong>
+                Preço total:
+                <span th:text="${reservation.totalPrice() + '€'}">
+                    8€
+                </span>
+            </strong>
+        </p>
+
+        <a href="/">
+            Voltar aos filmes
+        </a>
+
+    </main>
+
+    <footer>
+
+        <div class="logo">
+            CINEHUB
+        </div>
+
+        <p>
+            Uma experiência cinematográfica
+        </p>
+
+    </footer>
+
+</body>
+</html>

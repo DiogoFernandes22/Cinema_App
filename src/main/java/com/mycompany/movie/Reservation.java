@@ -19,6 +19,8 @@ public class Reservation {
     private ArrayList<Seat> mySeats; //Lista de lugares que o utilizador escolheu para esta reserva
     private ArrayList<Ticket>myTickets;//Uma reserva pode ter vários lugares, logo pode ter vários bilhetes
     private boolean confirmed;
+    private boolean paid;
+    private String paymentMethod;
     
     public Reservation(Session session, User user){
         //Assim a reserva fica associada à sessão
@@ -27,6 +29,9 @@ public class Reservation {
         this.user = user;
         this.mySeats = new ArrayList<>();
         this.myTickets = new ArrayList<>();
+        this.confirmed = false;
+        this.paid = false;
+        this.paymentMethod = null;
     }
     
     public void confirmReservation(){
@@ -239,6 +244,22 @@ public class Reservation {
     
     public boolean isConfirmed(){
         return confirmed;
+    }
+    
+    public boolean isPaid(){
+        return paid;
+    }
+    
+    public void setPaid(boolean paid){
+        this.paid = paid;
+    }
+    
+    public String getPaymentMethod(){
+        return paymentMethod;
+    }
+    
+    public void setPaymentMethod(String paymentMethod){
+        this.paymentMethod = paymentMethod;
     }
     
     //Pode ser útil, mas pode não ser necessário

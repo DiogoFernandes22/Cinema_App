@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CineHub - Pagamento</title>
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <div class="logo">
+            CINEHUB
+        </div>
+
+        <nav>
+            <a href="/">Filmes</a>
+            <a href="/">Sessões</a>
+            <a href="/">O Cinema</a>
+        </nav>
+
+        <button class="login-button">
+            Entrar
+        </button>
+
+    </header>
+
+
+    <main class="section">
+
+        <div class="section-header">
+
+            <div>
+                <p class="section-label">PAGAMENTO</p>
+
+                <h2>Pagamento</h2>
+            </div>
+
+        </div>
+
+
+        <div>
+
+            <h3>Resumo da compra</h3>
+
+            <p>
+                Filme:
+                <span th:text="${reservation.session.movie.name}">
+                    Avatar
+                </span>
+            </p>
+
+            <p>
+                Hora:
+                <span th:text="${reservation.session.time}">
+                    18:00
+                </span>
+            </p>
+
+            <p>
+                Total a pagar:
+                <strong>
+                    <span th:text="${reservation.totalPrice() + '€'}">
+                        16.0€
+                    </span>
+                </strong>
+            </p>
+
+        </div>
+
+
+        <div>
+
+            <h3>Dados de pagamento</h3>
+            
+            <p>Pagamento simulado - nenhum pagamento real será efetuado</p>
+            
+            <form action="/pay" method="get">
+                
+                <p>
+                    <strong>Método de pagamento</strong>
+                </p>
+                
+                <p>
+                    <input type="radio" id="mbway" name="paymentMethod" value="MB WAY" onchange="mostrarPagamento('mbway')" required>
+                    
+                    <label for="mbway">MB WAY</label>
+                </p>
+                
+                <p>
+                    <input type="radio" id="paypal" name="paymentMethod" value="PayPal" onchange="mostrarPagamento('paypal')">
+                    
+                    <label for="paypal">PayPal</label>
+                </p>
+                
+                <p>
+                    <input type="radio" id="multibanco" name="paymentMethod" value="Multibanco" onchange="mostrarPagamento('multibanco')">
+                    
+                    <label for="multibanco">Multibanco</label>
+                </p>
+                
+                <hr>
+                
+                <!-- MB WAY -->
+                
+                <div id="dados-mbway" style="display: none;">
+                    
+                    <h4>MB WAY</h4>
+                    
+                    <p>
+                        <label for="phone">Número de telemóvel</label>
+                        <br>
+                        
+                        <input type="text" id="phone" name="phone" placeholder="9XX XXX XXX">
+                    </p>
+                </div>
+                
+                <!-- PayPal -->
+                
+                <div id="dados-paypal" style="display: none;">
+                    
+                    <h4>PayPal</h4>
+                    
+                    <p>
+                        <label for="email">Email</label>
+                        <br>
+                        
+                        <input type="email" id="email" name="email" placeholder="exemplo@email.com">
+                    </p>
+                    
+                </div>
+                
+                <!-- Multibanco -->
+                
+                <div id="dados-multibanco" style="display: none;">
+                    
+                    <h4>Multibanco</h4>
+                    
+                    <p>Será gerada uma referência Multibanco para pagamento</p>
+                    
+                </div>
+                
+                <button type="submit">Pagar</button>
+                
+            </form>
+            
+            <script>
+                
+                function mostrarPagamento(metodo){
+                    
+                    document.getElementById("dados-mbway").style.display = "none";
+                    document.getElementById("dados-paypal").style.display = "none";
+                    document.getElementById("dados-multibanco").style.display = "none";
+                    
+                    if(metodo == "mbway"){
+                        document.getElementById("dados-mbway").style.display = "block";
+                    }
+                    
+                    if(metodo == "paypal"){
+                        document.getElementById("dados-paypal").style.display = "block";
+                    }
+                    
+                    if(metodo == "multibanco"){
+                        document.getElementById("dados-multibanco").style.display = "block";
+                    }
+                }
+                
+                </script>
+                
+        </div>
+
+    </main>
+
+
+    <footer>
+
+        <div class="logo">
+            CINEHUB
+        </div>
+
+        <p>
+            Uma experiência cinematográfica
+        </p>
+
+    </footer>
+
+</body>
+</html>

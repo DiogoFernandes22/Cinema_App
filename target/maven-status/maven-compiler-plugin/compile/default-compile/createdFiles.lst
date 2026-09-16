@@ -1,10 +1,13 @@
+com\mycompany\movie\DirectorRepository.class
 com\mycompany\movie\Movie.class
 com\mycompany\cinema\CinemaApplication.class
 com\mycompany\movie\Main.class
 com\mycompany\movie\Session.class
 com\mycompany\movie\User.class
+com\mycompany\cinema\DataBaseTest.class
 com\mycompany\movie\Room.class
 com\mycompany\movie\Ticket.class
 com\mycompany\cinema\HomeController.class
 com\mycompany\movie\Reservation.class
+com\mycompany\movie\Director.class
 com\mycompany\movie\Seat.class

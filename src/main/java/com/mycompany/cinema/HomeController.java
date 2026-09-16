@@ -147,8 +147,23 @@ public class HomeController {
         return "confirmation";
     }
     
-    @GetMapping("/confirm")
-    public String confirm(HttpSession httpSession, Model model){
+    @GetMapping("/payment")
+    public String payment(HttpSession httpSession, Model model){
+        
+        Reservation reservation =
+                (Reservation) httpSession.getAttribute("reservation");
+        
+        if(reservation == null){
+            return "redirect:/";
+        }
+        
+        model.addAttribute("reservation", reservation);
+        
+        return "payment";
+    }
+    
+    @GetMapping("/pay")
+    public String pay(@RequestParam("paymentMethod") String paymentMethod, HttpSession httpSession, Model model){
         
         Reservation reservation = (Reservation) httpSession.getAttribute("reservation");
         
@@ -156,6 +171,13 @@ public class HomeController {
             return "redirect:/";
         }
         
+        //Guardar o método de pagamento escolhido
+        reservation.setPaymentMethod(paymentMethod);
+        
+        //Simular o pagamento
+        reservation.setPaid(true);
+        
+        //A reserva fica confirmada
         reservation.setConfirmed(true);
         
         model.addAttribute("reservation", reservation);

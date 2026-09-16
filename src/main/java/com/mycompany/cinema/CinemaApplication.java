@@ -5,13 +5,17 @@
 package com.mycompany.cinema;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.boot.persistence.autoconfigure.EntityScan;
 
 /**
  *
  * @author diogo
  */
-@SpringBootApplication
+//procurar Controllers, Repositories, Entities, Components, etc. dentro de com.mycompany e dos seus subpacotes
+@SpringBootApplication(scanBasePackages = "com.mycompany")
+@EnableJpaRepositories(basePackages = "com.mycompany.movie")
+@EntityScan(basePackages = "com.mycompany.movie")
 public class CinemaApplication {
     
      public static void main(String[] args) {
