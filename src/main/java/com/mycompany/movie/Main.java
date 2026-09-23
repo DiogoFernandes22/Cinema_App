@@ -16,16 +16,20 @@ public class Main {
     cast.add("Sam Worthington");
     cast.add("Zoe Saldana");
 
-    Movie movie = new Movie(
-        "Avatar",
-        "Ficção Científica",
-        162,
-        2009,
-        "James Cameron",
-        cast,
-        "20th Century Studios",
-        7.8
-    );
+    Director director = new Director();
+    director.setName("James Cameron");
+
+    Studio studio = new Studio();
+    studio.setName("20th Century Studios");
+
+    Movie movie = new Movie();
+
+    movie.setName("Avatar");
+    movie.setDuration(162);
+    movie.setReleaseDate(2009);
+    movie.setRate(7.8);
+    movie.setDirector(director);
+    movie.setStudio(studio);
 
         // Criar sala NORMAL
         Room room = new Room("NORMAL");

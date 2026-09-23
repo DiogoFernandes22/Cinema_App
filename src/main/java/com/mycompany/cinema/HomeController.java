@@ -12,6 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpSession;
+import com.mycompany.movie.Director;
+import com.mycompany.movie.Studio;
 
 
 @Controller
@@ -191,16 +193,20 @@ public class HomeController {
         cast.add("Sam Worthington");
         cast.add("Zoe Saldana");
 
-        Movie movie = new Movie(
-                "Avatar",
-                "Ficção Científica",
-                162,
-                2009,
-                "James Cameron",
-                cast,
-                "20th Century Studios",
-                7.8
-        );
+        Director director = new Director();
+        director.setName("James Cameron");
+
+        Studio studio = new Studio();
+        studio.setName("20th Century Studios");
+
+        Movie movie = new Movie();
+
+        movie.setName("Avatar");
+        movie.setDuration(162);
+        movie.setReleaseDate(2009);
+        movie.setRate(7.8);
+        movie.setDirector(director);
+        movie.setStudio(studio);
 
         Room room = new Room("NORMAL");
 
@@ -228,31 +234,39 @@ public class HomeController {
         cast1.add("Sam Worthington");
         cast1.add("Zoe Saldana");
 
-        Movie movie1 = new Movie(
-                "Avatar",
-                "Ficção Científica",
-                162,
-                2009,
-                "James Cameron",
-                cast1,
-                "20th Century Studios",
-                7.8
-        );
+        Director director1 = new Director();
+        director1.setName("James Cameron");
+
+        Studio studio1 = new Studio();
+        studio1.setName("20th Century Studios");
+
+        Movie movie1 = new Movie();
+
+        movie1.setName("Avatar");
+        movie1.setDuration(162);
+        movie1.setReleaseDate(2009);
+        movie1.setRate(7.8);
+        movie1.setDirector(director1);
+        movie1.setStudio(studio1);
 
         ArrayList<String> cast2 = new ArrayList<>();
         cast2.add("Matthew McConaughey");
         cast2.add("Jessica Chastain");
 
-        Movie movie2 = new Movie(
-                "Interstellar",
-                "Ficção Científica",
-                169,
-                2014,
-                "Christopher Nolan",
-                cast2,
-                "Warner Bros.",
-                8.7
-        );
+        Director director2 = new Director();
+        director2.setName("Christopher Nolan");
+
+        Studio studio2 = new Studio();
+        studio2.setName("Warner Bros.");
+
+        Movie movie2 = new Movie();
+
+        movie2.setName("Interstellar");
+        movie2.setDuration(169);
+        movie2.setReleaseDate(2014);
+        movie2.setRate(8.7);
+        movie2.setDirector(director2);
+        movie2.setStudio(studio2);
 
         ArrayList<Movie> movies = new ArrayList<>();
 

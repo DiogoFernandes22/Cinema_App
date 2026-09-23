@@ -1,83 +1,105 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- */
-
 package com.mycompany.movie;
-import java.util.ArrayList; //para poder utilizar o ArrayList<String>
-/**
- *
- * @author diogo
- */
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+
+@Entity
+@Table(name = "movies")
 public class Movie {
-    // Declarar todos os atributos necessários para identificar um filme
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     private String name;
-    private String genre;
+
     private int duration;
+
+    @Column(name = "release_date")
     private int releaseDate;
-    private String director;
-    private ArrayList<String> cast; //lista dinâmica de objetos string, ou seja, o cast vai guardar vários objetos String, pode crescer ou diminuir de forma dinâmica
-    private String studio;
+
     private double rate;
-    //Construtor
-    public Movie(String name, String genre, int duration, int releaseDate, String director, ArrayList<String> cast, String studio, double rate){
-        
-        this.name = name;
-        this.genre = genre;
-        this.duration = duration;
-        this.releaseDate = releaseDate;
-        this.director = director;
-        this.cast = cast;
-        this.studio = studio;
-        this.rate = rate;
-        }
-    //Getters
-    public String getName(){
+
+    @ManyToOne
+    @JoinColumn(name = "director_id")
+    private Director director;
+
+    @ManyToOne
+    @JoinColumn(name = "studio_id")
+    private Studio studio;
+
+    public Movie() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
         return name;
     }
-    
-    public String getGenre(){
-        return genre;
+
+    public void setName(String name) {
+        this.name = name;
     }
-    
-    public int getDuration(){
+
+    public int getDuration() {
         return duration;
     }
-    
-    public int getReleaseDate(){
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public int getReleaseDate() {
         return releaseDate;
     }
-    
-    public String getDirector(){
-        return director;
+
+    public void setReleaseDate(int releaseDate) {
+        this.releaseDate = releaseDate;
     }
-    
-    public ArrayList<String> getCast(){
-        return cast;
-    }
-    
-    public String getStudio(){
-        return studio;
-    }
-    
-    public double getRate(){
+
+    public double getRate() {
         return rate;
     }
-    
-    // Adicionar ator ao elenco, fazer correções ao cast no sentido de adicionar atores 
-    public void addActor(String actor) {
-        cast.add(actor);
+
+    public void setRate(double rate) {
+        this.rate = rate;
     }
-    //Apresentação da informação
+
+    public Director getDirector() {
+        return director;
+    }
+
+    public void setDirector(Director director) {
+        this.director = director;
+    }
+
+    public Studio getStudio() {
+        return studio;
+    }
+
+    public void setStudio(Studio studio) {
+        this.studio = studio;
+    }
+
     @Override
     public String toString() {
-    return "Movie: " + name +
-           "\nGenre: " + genre +
-           "\nDuration: " + duration + "min" +
-           "\nRelease Year: " + releaseDate +
-           "\nDirector: " + director +
-           "\nCast: " + cast +
-           "\nStudio: " + studio +
-           "\nRate: " + rate;       
-}
-   
+        return "Movie: " + name +
+               "\nDuration: " + duration + "min" +
+               "\nRelease Year: " + releaseDate +
+               "\nDirector: " + (director != null ? director.getName() : "N/A") +
+               "\nStudio: " + (studio != null ? studio.getName() : "N/A") +
+               "\nRate: " + rate;
+    }
 }
