@@ -35,7 +35,7 @@ public class Main {
         Room room = new Room("NORMAL");
 
         // Criar sessão
-        Session session = new Session(movie, LocalTime.of(21, 0), room);
+        Session session = new Session(movie, LocalTime.of(21, 0), room, 8.0);
 
         // Criar reserva associada ao utilizador e à sessão
         Reservation reservation = new Reservation(session, user);

@@ -211,13 +211,13 @@ public class HomeController {
         Room room = new Room("NORMAL");
 
         Session session1 =
-                new Session(movie, LocalTime.of(18, 0), room);
+                new Session(movie, LocalTime.of(18, 0), room, 8.0);
 
         Session session2 =
-                new Session(movie, LocalTime.of(21, 0), room);
+                new Session(movie, LocalTime.of(21, 0), room, 8.0);
 
         Session session3 =
-                new Session(movie, LocalTime.of(23, 30), room);
+                new Session(movie, LocalTime.of(23, 30), room, 8.0);
 
         ArrayList<Session> sessions = new ArrayList<>();
 

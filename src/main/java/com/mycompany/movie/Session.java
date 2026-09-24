@@ -5,22 +5,43 @@
 package com.mycompany.movie;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Column;
 /**
  *
  * @author diogo
  */
+@Entity
+@Table(name = "sessions")
 public class Session {
     
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    
+    @ManyToOne
+    @JoinColumn(name = "movie_id")
     private Movie movie;
+    @Column(name = "session_time")
     private LocalTime time;
+    @ManyToOne
+    @JoinColumn(name = "room_id")
     private Room room;
     private ArrayList<Seat> occupiedSeats ;
+    private double ticketPrice;
     
-    public Session(Movie movie, LocalTime time, Room room){
+    public Session(Movie movie, LocalTime time, Room room, double ticketPrice){
         
         this.movie = movie;
         this.time = time;
         this.room = room;
+        this.ticketPrice = ticketPrice;
         
         occupiedSeats = new ArrayList<>();
         
@@ -70,4 +91,8 @@ public class Session {
     public LocalTime getTime(){
         return time;
     }
+    
+    public double getTicketPrice(){
+    return ticketPrice;
+}
 }

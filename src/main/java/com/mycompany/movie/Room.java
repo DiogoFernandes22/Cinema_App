@@ -3,18 +3,40 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.movie;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Transient;
 
 /**
  *
  * @author diogo
  */
+@Entity
+@Table(name = "rooms")
 public class Room {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    
+    @Transient
     //Array que contem as colunas e linhas de lugares da sala
     private Seat[][] seats;
+    
+    private String name;
+    private int capacity;
+    
     // Tipo de sala, Normal ou IMAX
     private String type;
     
+    public Room() {
+    }
+    
     public Room(String type){
+        this.name = name;
         this.type = type;
         //Caso seja normal 
         if(type.equals("NORMAL")){
@@ -25,11 +47,14 @@ public class Room {
         else if(type.equals("IMAX")){
             seats = new Seat[12][15];
         }
+        
         //Se não for um tipo válido
         else{
             
              System.out.println("Tipo de sala inválido, selecione NORMAL ou IMAX");
         }
+        
+        capacity = seats.length * seats[0].length;
         
        //Método para criar os lugares
         createSeats();
@@ -71,6 +96,18 @@ public class Room {
         
     return seats;
 }
+    
+    public int getId(){
+    return id;
+    }
+    
+    public String getName(){
+    return name;
+    }
+    
+    public int getCapacity(){
+    return capacity;
+    }
     
     public String getType(){
         return type;

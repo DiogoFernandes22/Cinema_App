@@ -7,6 +7,8 @@ public class TmdbMovie {
     private int duration;
     private String releaseDate;
     private double rate;
+    private String genres;
+    private String director;
 
     public TmdbMovie() {
     }
@@ -49,5 +51,21 @@ public class TmdbMovie {
 
     public void setRate(double rate) {
         this.rate = rate;
+    }
+    
+    public String getGenres() {
+    return genres;
+}
+
+    public void setGenres(String genres) {
+    this.genres = genres;
+}
+    
+    public String getDirector(){
+        return director;
+    }
+    
+    public void setDirector(String director){
+        this.director = director;
     }
 }

@@ -7,21 +7,44 @@ package com.mycompany.movie;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Iterator;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
 
 /**
  *
  * @author diogo
  */
+@Entity
+@Table(name = "reservations")
 public class Reservation {
     
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    
+    @ManyToOne
+    @JoinColumn(name = "session_id")
     private Session session; //Serve para a reservation guardar a session à qual pertence
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user; //Para a reserva ficar associada a uma pessoa
     private ArrayList<Seat> mySeats; //Lista de lugares que o utilizador escolheu para esta reserva
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
     private ArrayList<Ticket>myTickets;//Uma reserva pode ter vários lugares, logo pode ter vários bilhetes
     private boolean confirmed;
     private boolean paid;
     private String paymentMethod;
     
+    public Reservation(){
+        
+    }
     public Reservation(Session session, User user){
         //Assim a reserva fica associada à sessão
         this.session = session;
@@ -119,6 +142,7 @@ public class Reservation {
                 if(session.reserveSeat(seat)){
                 mySeats.add(seat);//Adiciona o lugar à lista de lugares desta reserva
                 Ticket ticket = chooseTicketType(seat);//Cria um bilhete para este lugar e guarda-o na variável ticket. Associar um tipo de bilhete ao lugar forneceido pelo chooseTicket
+                ticket.setReservation(this);
                 myTickets.add(ticket);
                 System.out.println("Lugar está reservado");
                 }
@@ -158,7 +182,7 @@ public class Reservation {
     }
         }
     //Contem o tipo escolhido pelo utilizador assim como o seat/lugar que foi passado
-    return new Ticket(typeTicket, seat);
+    return new Ticket(typeTicket, seat, session);
     }
     
     public void cancelSeat(){
@@ -230,13 +254,11 @@ public class Reservation {
     }
     //Para podermos criar uma reserva a partir do site sem utilizar o scanner
     public void addTicket(String typeTicket, Seat seat){
-        
-        Ticket ticket = new Ticket(typeTicket, seat);
-        
-        myTickets.add(ticket);
-        mySeats.add(seat);
-        
-    }
+    Ticket ticket = new Ticket(typeTicket, seat, session);
+    ticket.setReservation(this);
+    myTickets.add(ticket);
+    mySeats.add(seat);
+}
     
     public void setConfirmed(boolean confirmed){
         this.confirmed = confirmed;

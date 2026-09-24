@@ -70,6 +70,9 @@ public DataBaseTest(
         System.out.println("Título: " + resultado.getTitle());
         System.out.println("Data de lançamento: " + resultado.getReleaseDate());
         System.out.println("Nota: " + resultado.getRate());
+        System.out.println("Duração: " + resultado.getDuration() + " minutos");
+        System.out.println("Géneros: " + resultado.getGenres());
+        System.out.println("Realizador: " + resultado.getDirector());
         System.out.println("=================================");
         }
 }
