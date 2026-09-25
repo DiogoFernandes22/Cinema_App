@@ -6,9 +6,13 @@ C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\cinema\TmdbService
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\cinema\TmdbTest.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\Director.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\DirectorRepository.java
+C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\Genre.java
+C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\GenreRepository.java
+C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\GenreService.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\Main.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\Movie.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\MovieApplication.java
+C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\MovieImportService.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\MovieRepository.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\Reservation.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\Room.java

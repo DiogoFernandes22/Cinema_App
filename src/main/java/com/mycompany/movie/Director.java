@@ -8,6 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 /**
  *
  * @author diogo
@@ -20,6 +22,7 @@ public class Director {
     // este atributo é o identificador único desta entidade
     @Id
     // O atributo id do Java corresponde à coluna director_id do MySQL
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "director_id")
     private int id;
     

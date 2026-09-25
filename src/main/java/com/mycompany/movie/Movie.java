@@ -8,6 +8,11 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
+import java.util.ArrayList;
+import java.util.List;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.JoinTable;
+
 
 @Entity
 @Table(name = "movies")
@@ -33,6 +38,14 @@ public class Movie {
     @ManyToOne
     @JoinColumn(name = "studio_id")
     private Studio studio;
+    
+    @ManyToMany
+    @JoinTable(
+    name = "movie_genres",
+    joinColumns = @JoinColumn(name = "movie_id"),
+    inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    private List<Genre> genres = new ArrayList<>();
 
     public Movie() {
     }
@@ -91,6 +104,14 @@ public class Movie {
 
     public void setStudio(Studio studio) {
         this.studio = studio;
+    }
+    
+    public List<Genre> getGenres() {
+    return genres;
+    }
+
+    public void setGenres(List<Genre> genres) {
+    this.genres = genres;
     }
 
     @Override

@@ -7,6 +7,8 @@ import java.net.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Value;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -45,7 +47,6 @@ public class TmdbService {
     movie.setTitle(primeiroResultado.get("title").asText());
     movie.setReleaseDate(primeiroResultado.get("release_date").asText());
     movie.setRate(primeiroResultado.get("vote_average").asDouble());
-
     String movieId = primeiroResultado.get("id").asText();
 
     String detailsUrl = "https://api.themoviedb.org/3/movie/" + movieId;
@@ -64,16 +65,24 @@ public class TmdbService {
 
     movie.setDuration(detailsJson.get("runtime").asInt());
     
-    StringBuilder genres = new StringBuilder();
+    List<String> genres = new ArrayList<>();
 
     for (JsonNode genre : detailsJson.get("genres")) {
-    if (genres.length() > 0) {
-        genres.append(", ");
-    }
-    genres.append(genre.get("name").asText());
+    genres.add(genre.get("name").asText());
     }
 
-    movie.setGenres(genres.toString());
+    movie.setGenres(genres);
+    
+    JsonNode productionCompanies = detailsJson.get("production_companies");
+
+    if (productionCompanies != null && productionCompanies.isArray()
+        && productionCompanies.size() > 0) {
+
+    String studioName =
+            productionCompanies.get(0).get("name").asText();
+
+    movie.setStudio(studioName);
+}
     
     String creditsUrl = "https://api.themoviedb.org/3/movie/" + movieId + "/credits";
 

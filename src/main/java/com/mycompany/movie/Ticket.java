@@ -28,12 +28,18 @@ public class Ticket {
     
     @Column(name = "type_ticket")
     private String typeTicket;
+    
     @ManyToOne
     @JoinColumn(name = "seat_id")
     private Seat seat;
+    
+    @ManyToOne
+    @JoinColumn(name = "session_id")
     private Session session;
+    
     @Column(name = "price_paid")
     private double pricePaid;
+    
     @ManyToOne
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;

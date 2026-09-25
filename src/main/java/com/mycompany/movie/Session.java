@@ -36,6 +36,9 @@ public class Session {
     private ArrayList<Seat> occupiedSeats ;
     private double ticketPrice;
     
+    public Session() {
+    }
+    
     public Session(Movie movie, LocalTime time, Room room, double ticketPrice){
         
         this.movie = movie;

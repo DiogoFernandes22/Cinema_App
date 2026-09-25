@@ -1,4 +1,5 @@
 package com.mycompany.cinema;
+import java.util.List;
 
 public class TmdbMovie {
 
@@ -7,8 +8,9 @@ public class TmdbMovie {
     private int duration;
     private String releaseDate;
     private double rate;
-    private String genres;
+    private List<String> genres;
     private String director;
+    private String studio;
 
     public TmdbMovie() {
     }
@@ -53,13 +55,13 @@ public class TmdbMovie {
         this.rate = rate;
     }
     
-    public String getGenres() {
+    public List<String> getGenres() {
     return genres;
-}
+    }
 
-    public void setGenres(String genres) {
+    public void setGenres(List<String> genres) {
     this.genres = genres;
-}
+    }
     
     public String getDirector(){
         return director;
@@ -68,4 +70,12 @@ public class TmdbMovie {
     public void setDirector(String director){
         this.director = director;
     }
+    public String getStudio() {
+    return studio;
+}
+
+    public void setStudio(String studio) {
+    this.studio = studio;
+}
+    
 }
