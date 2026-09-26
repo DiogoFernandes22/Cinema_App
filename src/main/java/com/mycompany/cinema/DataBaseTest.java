@@ -119,6 +119,12 @@ public class DataBaseTest implements CommandLineRunner {
 
         Movie movieFromTmdb =
             movieImportService.searchMovieFromTmdb("Avatar");
+        Movie savedMovie =
+        movieImportService.saveMovie(movieFromTmdb);
+
+        System.out.println("FILME GUARDADO:");
+        System.out.println("ID: " + savedMovie.getId());
+        System.out.println("Nome: " + savedMovie.getName());
 
         System.out.println("Filme: " + movieFromTmdb.getName());
         System.out.println("Duração: " + movieFromTmdb.getDuration());

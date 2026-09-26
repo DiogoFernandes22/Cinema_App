@@ -11,6 +11,7 @@ com\mycompany\cinema\HomeController.class
 com\mycompany\movie\Studio.class
 com\mycompany\movie\Director.class
 com\mycompany\movie\Movie.class
+com\mycompany\movie\MovieController.class
 com\mycompany\cinema\CinemaApplication.class
 com\mycompany\movie\Genre.class
 com\mycompany\movie\Main.class

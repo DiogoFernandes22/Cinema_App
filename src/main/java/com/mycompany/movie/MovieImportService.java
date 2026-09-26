@@ -6,6 +6,7 @@ package com.mycompany.movie;
 import com.mycompany.cinema.TmdbService;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.ArrayList;
 /**
  *
  * @author diogo
@@ -13,6 +14,7 @@ import java.util.List;
 @Service
 public class MovieImportService {
 
+    private boolean movieAlreadyExists;
     private final MovieRepository movieRepository;
     private final DirectorRepository directorRepository;
     private final StudioRepository studioRepository;
@@ -43,47 +45,36 @@ public class MovieImportService {
 
     Movie movie = new Movie();
 
+    movie.setTmdbId(tmdbMovie.getId());
     movie.setName(tmdbMovie.getTitle());
     movie.setDuration(tmdbMovie.getDuration());
     movie.setRate(tmdbMovie.getRate());
     
     if (tmdbMovie.getDirector() != null) {
 
-    Director director =
-            directorRepository.findByNameIgnoreCase(
-                    tmdbMovie.getDirector()
-            );
-
-    if (director == null) {
-        director = new Director();
-        director.setName(tmdbMovie.getDirector());
-
-        director = directorRepository.save(director);
-    }
+    Director director = new Director();
+    director.setName(tmdbMovie.getDirector());
 
     movie.setDirector(director);
 }
     
     if (tmdbMovie.getGenres() != null) {
-    List<Genre> genres =
-            genreService.findOrCreateAll(tmdbMovie.getGenres());
+
+    List<Genre> genres = new ArrayList<>();
+
+    for (String genreName : tmdbMovie.getGenres()) {
+        Genre genre = new Genre();
+        genre.setName(genreName);
+        genres.add(genre);
+    }
 
     movie.setGenres(genres);
 }
     
     if (tmdbMovie.getStudio() != null) {
 
-    Studio studio =
-            studioRepository.findByNameIgnoreCase(
-                    tmdbMovie.getStudio()
-            );
-
-    if (studio == null) {
-        studio = new Studio();
-        studio.setName(tmdbMovie.getStudio());
-
-        studio = studioRepository.save(studio);
-    }
+    Studio studio = new Studio();
+    studio.setName(tmdbMovie.getStudio());
 
     movie.setStudio(studio);
 }
@@ -100,6 +91,65 @@ public class MovieImportService {
 }
     
     public Movie saveMovie(Movie movie) {
+        
+        movieAlreadyExists = false;
+        
+        if (movie.getTmdbId() != null) {
+
+            Movie existingMovie =
+            movieRepository.findByTmdbId(movie.getTmdbId());
+
+        if (existingMovie != null) {
+            movieAlreadyExists = true;
+            return existingMovie;
+        }
+    }
+
+    if (movie.getDirector() != null) {
+
+        Director director =
+                directorRepository.findByNameIgnoreCase(
+                        movie.getDirector().getName()
+                );
+
+        if (director == null) {
+            director = directorRepository.save(movie.getDirector());
+        }
+
+        movie.setDirector(director);
+    }
+
+    if (movie.getStudio() != null) {
+
+        Studio studio =
+                studioRepository.findByNameIgnoreCase(
+                        movie.getStudio().getName()
+                );
+
+        if (studio == null) {
+            studio = studioRepository.save(movie.getStudio());
+        }
+
+        movie.setStudio(studio);
+    }
+    
+    if (movie.getGenres() != null) {
+
+    List<String> genreNames = new ArrayList<>();
+
+    for (Genre genre : movie.getGenres()) {
+        genreNames.add(genre.getName());
+    }
+
+    List<Genre> genres =
+            genreService.findOrCreateAll(genreNames);
+
+    movie.setGenres(genres);
+}
+
     return movieRepository.save(movie);
+}
+    public boolean isMovieAlreadyExists() {
+    return movieAlreadyExists;
 }
 }

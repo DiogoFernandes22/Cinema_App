@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Pesquisar Filme</title>
+</head>
+<body>
+
+    <h1>Pesquisar filme no TMDB</h1>
+
+    <form action="/admin/movies/search" method="get">
+        <input type="text" name="title" placeholder="Nome do filme" required>
+        <button type="submit">Pesquisar</button>
+    </form>
+
+    <div th:if="${movie != null}">
+
+        <h2 th:text="${movie.name}"></h2>
+
+        <p>
+            <strong>Duração:</strong>
+            <span th:text="${movie.duration}"></span> minutos
+        </p>
+
+        <p>
+            <strong>Ano:</strong>
+            <span th:text="${movie.releaseDate}"></span>
+        </p>
+
+        <p>
+            <strong>Rating:</strong>
+            <span th:text="${movie.rate}"></span>
+        </p>
+
+        <p>
+            <strong>Realizador:</strong>
+            <span th:text="${movie.director.name}"></span>
+        </p>
+
+        <p>
+            <strong>Estúdio:</strong>
+            <span th:text="${movie.studio.name}"></span>
+        </p>
+
+        <h3>Géneros</h3>
+
+        <ul>
+            <li th:each="genre : ${movie.genres}"
+                th:text="${genre.name}">
+            </li>
+        </ul>
+        
+        <form action="/admin/movies/import" method="get">
+        <input type="hidden" name="title" th:value="${movie.name}">
+        <button type="submit">Adicionar ao CineHub</button>
+        </form>
+
+    </div>
+
+</body>
+</html>

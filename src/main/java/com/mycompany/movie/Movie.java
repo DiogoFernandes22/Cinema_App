@@ -30,6 +30,9 @@ public class Movie {
     private int releaseDate;
 
     private double rate;
+    
+    @Column(name = "tmdb_id")
+    private Integer tmdbId;
 
     @ManyToOne
     @JoinColumn(name = "director_id")
@@ -92,6 +95,14 @@ public class Movie {
 
     public Director getDirector() {
         return director;
+    }
+    
+    public Integer getTmdbId() {
+    return tmdbId;
+    }
+
+    public void setTmdbId(Integer tmdbId) {
+    this.tmdbId = tmdbId;
     }
 
     public void setDirector(Director director) {
