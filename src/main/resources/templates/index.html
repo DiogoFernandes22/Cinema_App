@@ -39,7 +39,9 @@
             <!--Usa-se span para a informação estar na mesma linha, em vez de cada um estar numa linha diferente-->
             <span th:text="${movie.releaseDate}">2009</span>
             <span th:text="${movie.duration + ' min'}">162 min</span>
-            <span th:text="${movie.genre}">Ficção Científica</span>
+            <span th:each="genre : ${movie.genres}"
+            th:text="${genre.name}">
+            </span>
         </div>
             <button class="primary-button">Ver sessões</button>
         </div>
@@ -65,7 +67,11 @@
                 
                 <div class="movie-card-info">
                     <h3 th:text="${movie.name}">Avatar</h3>
-                    <p th:text="${movie.genre}">Ficção Científica</p>
+                    <p>
+                <span th:each="genre : ${movie.genres}"
+                th:text="${genre.name + ' '}">
+                </span>
+                </p>
                     <p th:text="${'Avaliação: ' + movie.rate}">Avaliação: 7.8</p>
                     <button class="secondary-button">Ver sessões</button>
                 </div>

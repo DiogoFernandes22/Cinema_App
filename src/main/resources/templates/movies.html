@@ -3,26 +3,18 @@
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
 -->
-<!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Pesquisar Filme</title>
+    <title>Filmes - CineHub</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
 
-    <h1>Pesquisar filme no TMDB</h1>
+    <h1>Filmes em cartaz no CineHub</h1>
+    <div class="movies">
 
-    <form action="/admin/movies/search" method="get">
-        <input type="text" name="title" placeholder="Nome do filme" required>
-        <button type="submit">Pesquisar</button>
-    </form>
-
-    <div th:if="${movie != null}">
-        
-        <p th:if="${message != null}"
-        th:text="${message}">
-        </p>
+    <div class="movie-card" th:each="movie : ${movies}">
 
         <h2 th:text="${movie.name}"></h2>
 
@@ -41,30 +33,30 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             <span th:text="${movie.rate}"></span>
         </p>
 
-        <p>
+        <p th:if="${movie.director != null}">
             <strong>Realizador:</strong>
             <span th:text="${movie.director.name}"></span>
         </p>
 
-        <p>
+        <p th:if="${movie.studio != null}">
             <strong>Estúdio:</strong>
             <span th:text="${movie.studio.name}"></span>
         </p>
-
-        <h3>Géneros</h3>
+        
+        <p>
+        <strong>Géneros:</strong>
+        </p>
 
         <ul>
-            <li th:each="genre : ${movie.genres}"
-                th:text="${genre.name}">
-            </li>
+        <li th:each="genre : ${movie.genres}"
+            th:text="${genre.name}">
+        </li>
         </ul>
-        
-        <form action="/admin/movies/import" method="get">
-        <input type="hidden" name="title" th:value="${movie.name}">
-        <button type="submit">Adicionar ao CineHub</button>
-        </form>
+
+        <hr>
 
     </div>
+        </div>
 
 </body>
 </html>

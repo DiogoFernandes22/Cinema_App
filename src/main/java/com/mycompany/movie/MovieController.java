@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
 /**
  *
  * @author diogo
@@ -16,10 +17,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class MovieController {
 
     private final MovieImportService movieImportService;
+    private final MovieRepository movieRepository;
 
-    public MovieController(MovieImportService movieImportService) {
-        this.movieImportService = movieImportService;
-    }
+    public MovieController(
+        MovieImportService movieImportService,
+        MovieRepository movieRepository) {
+
+    this.movieImportService = movieImportService;
+    this.movieRepository = movieRepository;
+}
 
     @GetMapping("/admin/movies/search")
     public String searchMovie(
@@ -28,7 +34,17 @@ public class MovieController {
 
         Movie movie = movieImportService.searchMovieFromTmdb(title);
 
-        model.addAttribute("movie", movie);
+        Movie savedMovie = movieImportService.saveMovie(movie);
+
+        model.addAttribute("movie", savedMovie);
+
+        if (movieImportService.isMovieAlreadyExists()) {
+            model.addAttribute("message",
+            "Este filme já existe no CineHub.");
+        } else {
+            model.addAttribute("message",
+            "Filme adicionado ao CineHub com sucesso.");
+}
 
         return "movie-search";
     }
@@ -46,4 +62,12 @@ public class MovieController {
 
     return "movie-search";
 }
+    
+    @GetMapping("/movies")
+    public String listMovies(Model model) {
+
+    model.addAttribute("movies", movieRepository.findAll());
+
+        return "movies";
+    }
 }

@@ -14,17 +14,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpSession;
 import com.mycompany.movie.Director;
 import com.mycompany.movie.Studio;
+import com.mycompany.movie.MovieRepository;
+import java.util.List;
 
 
 @Controller
 public class HomeController {
+    
+    private final MovieRepository movieRepository;
+
+    public HomeController(MovieRepository movieRepository) {
+    this.movieRepository = movieRepository;
+    }
 
     @GetMapping("/")
     public String home(Model model) {
 
         ArrayList<Session> sessions = createSessions();
 
-        ArrayList<Movie> movies = createMovies();
+        List<Movie> movies = movieRepository.findAll();
 
         // Filme que aparece inicialmente na página
         Movie movie = sessions.get(0).getMovie();
