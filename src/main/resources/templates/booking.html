@@ -57,7 +57,7 @@
         <form id="bookingForm" action="/reserve" method="get">
             
             <!-- Sessão escolhida -->
-            <input type="hidden" name="time" th:value="${movieSession.time}">
+            <input type="hidden" name="sessionId" th:value="${movieSession.id}">
             
         <h2>Tipo de bilhete</h2>
         <!-- action é para onde os dados serão enviados e o method como são enviados -->

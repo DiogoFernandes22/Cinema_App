@@ -16,71 +16,97 @@ import com.mycompany.movie.Director;
 import com.mycompany.movie.Studio;
 import com.mycompany.movie.MovieRepository;
 import java.util.List;
+import com.mycompany.movie.SessionRepository;
+import com.mycompany.movie.ReservationRepository;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import com.mycompany.movie.TicketRepository;
 
 
 @Controller
 public class HomeController {
-    
-    private final MovieRepository movieRepository;
 
-    public HomeController(MovieRepository movieRepository) {
+    private final MovieRepository movieRepository;
+    private final SessionRepository sessionRepository;
+    private final ReservationRepository reservationRepository;
+    private final TicketRepository ticketRepository;
+
+    public HomeController(
+        MovieRepository movieRepository,
+        SessionRepository sessionRepository,
+        ReservationRepository reservationRepository,
+        TicketRepository ticketRepository) {
+
     this.movieRepository = movieRepository;
-    }
+    this.sessionRepository = sessionRepository;
+    this.reservationRepository = reservationRepository;
+    this.ticketRepository = ticketRepository;
+}
 
     @GetMapping("/")
     public String home(Model model) {
 
-        ArrayList<Session> sessions = createSessions();
+    List<Session> sessions = sessionRepository.findAll();
 
-        List<Movie> movies = movieRepository.findAll();
+    List<Movie> movies = movieRepository.findAll();
 
-        // Filme que aparece inicialmente na página
-        Movie movie = sessions.get(0).getMovie();
+    // Filme que aparece inicialmente na página
+    Movie movie = movies.get(0);
 
-        // Sessão selecionada inicialmente: 21:00
-        Session movieSession = sessions.get(1);
+    // Sessão selecionada inicialmente: 21:00
+    Session movieSession = sessions.get(1);
 
-        model.addAttribute("movies", movies);
-        model.addAttribute("movie", movie);
-        model.addAttribute("movieSession", movieSession);
-        model.addAttribute("sessions", sessions);
+    // Agrupar as sessões por filme
+    Map<Movie, List<Session>> sessionsByMovie = new LinkedHashMap<>();
 
-        return "index";
+    for (Session session : sessions) {
+
+        Movie sessionMovie = session.getMovie();
+
+        sessionsByMovie
+                .computeIfAbsent(sessionMovie, key -> new ArrayList<>())
+                .add(session);
     }
+
+    model.addAttribute("movies", movies);
+    model.addAttribute("movie", movie);
+    model.addAttribute("movieSession", movieSession);
+    model.addAttribute("sessions", sessions);
+    model.addAttribute("sessionsByMovie", sessionsByMovie);
+
+    return "index";
+}
 
     @GetMapping("/session")
     public String selectSession(
-            @RequestParam("time") String time,
-            Model model) {
+        @RequestParam("id") int id,
+        Model model) {
 
-        System.out.println("Sessão escolhida: " + time);
+    System.out.println("Sessão escolhida: " + id);
 
-        ArrayList<Session> sessions = createSessions();
+    Session selectedSession = sessionRepository.findById(id).orElse(null);
+    
+    System.out.println("Sala: " + selectedSession.getRoom().getName());
+    System.out.println("Lugares: " + selectedSession.getRoom().GetSeats().length);
+    
+    System.out.println("Primeiro lugar: "
+        + selectedSession.getRoom().GetSeats()[0][0]);
 
-        LocalTime selectedTime = LocalTime.parse(time);
+    System.out.println("Último lugar: "
+        + selectedSession.getRoom().GetSeats()[9][11]);
 
-        Session selectedSession = null;
-
-        for (Session session : sessions) {
-
-            if (session.getTime().equals(selectedTime)) {
-                selectedSession = session;
-                break;
-            }
-        }
-
-        if (selectedSession == null) {
-            return "redirect:/";
-        }
-
-        model.addAttribute("movieSession", selectedSession);
-
-        return "booking";
+    if (selectedSession == null) {
+        return "redirect:/";
     }
+
+    model.addAttribute("movieSession", selectedSession);
+
+    return "booking";
+}
 
     @GetMapping("/reserve")
     public String reserve(
-            @RequestParam("time") String time,
+            @RequestParam("sessionId") int sessionId,
             @RequestParam("normal") int normal,
             @RequestParam("estudante") int estudante,
             @RequestParam("crianca") int crianca,
@@ -88,22 +114,11 @@ public class HomeController {
             Model model, 
             HttpSession httpSession) {
 
-        System.out.println("Sessão: " + time);
+        System.out.println("Sessão: " + sessionId);
         System.out.println("Lugares escolhidos: " + seats);
 
-        LocalTime selectedTime = LocalTime.parse(time);
-
-        ArrayList<Session> sessions = createSessions();
-
-        Session selectedSession = null;
-
-        for (Session session : sessions) {
-
-            if (session.getTime().equals(selectedTime)) {
-                selectedSession = session;
-                break;
-            }
-        }
+        Session selectedSession =
+            sessionRepository.findById(sessionId).orElse(null);
 
         if (selectedSession == null) {
             return "redirect:/";
@@ -139,19 +154,35 @@ public class HomeController {
                 
                 for(Seat seat : row){
                     
-                    if (seat.toString().equals(seatName)){
-                        
-                        String ticketType = ticketTypes.get(i);
-                        
-                        reservation.addTicket(ticketType, seat);
-                    }
+                    if (seat.toString().equals(seatName)) {
+
+                        boolean occupied = ticketRepository.existsBySessionIdAndSeatId(selectedSession.getId(),seat.getId());
+                        if (occupied) {
+                            System.out.println("Lugar " + seatName + " já está ocupado.");
+                            continue;
+                        }
+
+    String ticketType = ticketTypes.get(i);
+
+    reservation.addTicket(ticketType, seat);
+}
                 }
             }
         }
         
+        
+        //Guardar a reserva na base de dados
+        reservationRepository.save(reservation);
+        if (reservation.getMyTickets().isEmpty()) {
+            return "redirect:/";
+        }
+        //Guardar a reserva na base de dados
+        reservationRepository.save(reservation);
+
         //Enviar a Reservation para o confirmation.html
         model.addAttribute("reservation", reservation);
-         //guarda temporariamente a reserva para o /confirm
+
+        //Guardar temporariamente a reserva para o /payment
         httpSession.setAttribute("reservation", reservation);
 
         return "confirmation";
@@ -173,27 +204,30 @@ public class HomeController {
     }
     
     @GetMapping("/pay")
-    public String pay(@RequestParam("paymentMethod") String paymentMethod, HttpSession httpSession, Model model){
-        
-        Reservation reservation = (Reservation) httpSession.getAttribute("reservation");
-        
-        if(reservation == null){
-            return "redirect:/";
-        }
-        
-        //Guardar o método de pagamento escolhido
-        reservation.setPaymentMethod(paymentMethod);
-        
-        //Simular o pagamento
-        reservation.setPaid(true);
-        
-        //A reserva fica confirmada
-        reservation.setConfirmed(true);
-        
-        model.addAttribute("reservation", reservation);
-        
-        return "confirmed";
+    public String pay(
+        @RequestParam("paymentMethod") String paymentMethod,
+        HttpSession httpSession,
+        Model model) {
+
+    Reservation reservation =
+            (Reservation) httpSession.getAttribute("reservation");
+
+    if (reservation == null) {
+        return "redirect:/";
     }
+
+    // Alterar os dados da reserva
+    reservation.setPaymentMethod(paymentMethod);
+    reservation.setPaid(true);
+    reservation.setConfirmed(true);
+
+    // Guardar as alterações na base de dados
+    reservationRepository.save(reservation);
+
+    model.addAttribute("reservation", reservation);
+
+    return "confirmed";
+}
 
     private ArrayList<Session> createSessions() {
 

@@ -5,6 +5,7 @@
 package com.mycompany.movie;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Iterator;
 import jakarta.persistence.Entity;
@@ -16,6 +17,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Transient;
 
 /**
  *
@@ -35,9 +37,10 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user; //Para a reserva ficar associada a uma pessoa
+    @Transient
     private ArrayList<Seat> mySeats; //Lista de lugares que o utilizador escolheu para esta reserva
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
-    private ArrayList<Ticket>myTickets;//Uma reserva pode ter vários lugares, logo pode ter vários bilhetes
+    private List<Ticket>myTickets;//Uma reserva pode ter vários lugares, logo pode ter vários bilhetes
     private boolean confirmed;
     private boolean paid;
     private String paymentMethod;
@@ -45,6 +48,11 @@ public class Reservation {
     public Reservation(){
         
     }
+    
+    public int getId() {
+    return id;
+    }
+    
     public Reservation(Session session, User user){
         //Assim a reserva fica associada à sessão
         this.session = session;
@@ -249,7 +257,7 @@ public class Reservation {
         return user;
     }
     //Poder consultar os bilhetes que pertencem àquela reserva
-    public ArrayList<Ticket> getMyTickets(){
+    public List<Ticket> getMyTickets(){
         return myTickets;
     }
     //Para podermos criar uma reserva a partir do site sem utilizar o scanner
@@ -292,6 +300,7 @@ public class Reservation {
     public ArrayList<Seat> getMySeats(){
         return mySeats;
     }
+    
     
     
 }

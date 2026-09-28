@@ -9,6 +9,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Transient;
+import jakarta.persistence.OneToMany;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  *
@@ -25,6 +28,9 @@ public class Room {
     @Transient
     //Array que contem as colunas e linhas de lugares da sala
     private Seat[][] seats;
+    
+    @OneToMany(mappedBy = "room")
+    private List<Seat> seatList = new ArrayList<>();
     
     private String name;
     private int capacity;
@@ -92,8 +98,38 @@ public class Room {
     }
 }
     
-    public Seat[][] GetSeats(){ //Para conseguir aceder aos seats no Session
-        
+    public Seat[][] GetSeats() {
+
+    if (seatList == null || seatList.isEmpty()) {
+        return new Seat[0][0];
+    }
+
+    int maxRow = 0;
+    int maxSeatNumber = 0;
+
+    for (Seat seat : seatList) {
+
+        int rowIndex = seat.getRow() - 'A';
+
+        if (rowIndex > maxRow) {
+            maxRow = rowIndex;
+        }
+
+        if (seat.getSeatNumber() > maxSeatNumber) {
+            maxSeatNumber = seat.getSeatNumber();
+        }
+    }
+
+    seats = new Seat[maxRow + 1][maxSeatNumber];
+
+    for (Seat seat : seatList) {
+
+        int rowIndex = seat.getRow() - 'A';
+        int columnIndex = seat.getSeatNumber() - 1;
+
+        seats[rowIndex][columnIndex] = seat;
+    }
+
     return seats;
 }
     

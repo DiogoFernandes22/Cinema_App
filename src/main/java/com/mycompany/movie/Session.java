@@ -13,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Column;
+import jakarta.persistence.Transient;
 /**
  *
  * @author diogo
@@ -33,6 +34,7 @@ public class Session {
     @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
+    @Transient
     private ArrayList<Seat> occupiedSeats ;
     private double ticketPrice;
     
@@ -49,6 +51,10 @@ public class Session {
         occupiedSeats = new ArrayList<>();
         
     }
+    
+    public int getId() {
+    return id;
+}
     
     public void availableSeats(){
         for (int i = 0; i < room.GetSeats().length; i++){ //Aqui só estou a percorrer as filas Preciso de percorrer os seats da sala e verificar aqueles que não estão no occupiedSeats. Não dá para comparar um int com um array, por isso tem de ser room.GetSeats().length 

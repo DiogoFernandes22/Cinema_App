@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 
 /**
  *
@@ -20,8 +22,9 @@ public class Seat {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "room_id")
-    private int roomId;
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    private Room room;
 
     @Column(name = "row_letter")
     private char row;
@@ -45,13 +48,13 @@ public class Seat {
         this.id = id;
     }
 
-    public int getRoomId() {
-        return roomId;
-    }
+    public Room getRoom() {
+    return room;
+}
 
-    public void setRoomId(int roomId) {
-        this.roomId = roomId;
-    }
+    public void setRoom(Room room) {
+    this.room = room;
+}
 
     public char getRow() {
         return row;

@@ -32,7 +32,7 @@
         
         <div class="hero-content">
             <p class="small-title">EM EXIBIÇÃO</p> 
-            <h1>AVATAR</h1>
+            <h1 th:text="${movie.name}">AVATAR</h1>
             <p class="description">Uma experiência cinematográfica num mundo extraordinário</p>
         
         <div class="movie-info">
@@ -81,32 +81,42 @@
     </section>
     
     <section id="sessoes" class="sessions-section">
-        
-        <div class="section-header">
-            <div>
-                <p class="section-label">HOJE</p>
-                <h2>Sessões</h2>
-            </div>
+
+    <div class="section-header">
+        <div>
+            <p class="section-label">HOJE</p>
+            <h2>Sessões</h2>
         </div>
-        
-        <div class="session">
-            <div>
-                <h3 th:text="${movieSession.movie.name}">Avatar</h3>
-                <p th:text="${'Sala ' + movieSession.room.type}">Sala NORMAL</p>
-                <p th:text="${'Hora: ' + movieSession.time}">Hora: 21:00</p>
-            </div>
-            
-            <div class="session-times">
-                
-                <form th:each="currentSession : ${sessions}" th:action="@{/session}" method="get">
-                <!-- currentSession é a declarar a variável e o sessions é a lista que vem do java -->
-                <button type="submit" name="time" th:text="${currentSession.time}" th:value="${currentSession.time}">
-            21:00 </button>
-                </form>
-            
-            </div>
+    </div>
+
+    <div th:each="entry : ${sessionsByMovie}" class="session">
+
+        <div>
+            <h3 th:text="${entry.key.name}">Avatar</h3>
+            <p th:text="${entry.value[0].room.name}">
+            Sala 1
+        </p>
         </div>
-        
+
+        <div class="session-times">
+
+            <form th:each="currentSession : ${entry.value}"
+                  th:action="@{/session}"
+                  method="get">
+
+                <button type="submit"
+                        name="id"
+                        th:text="${currentSession.time}"
+                        th:value="${currentSession.id}">
+                    21:00
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
     </section>
     
     <footer>

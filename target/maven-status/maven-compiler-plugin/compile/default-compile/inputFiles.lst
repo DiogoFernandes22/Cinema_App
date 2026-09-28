@@ -16,10 +16,13 @@ C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\MovieControl
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\MovieImportService.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\MovieRepository.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\Reservation.java
+C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\ReservationRepository.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\Room.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\Seat.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\Session.java
+C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\SessionRepository.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\Studio.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\StudioRepository.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\Ticket.java
+C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\TicketRepository.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\User.java
