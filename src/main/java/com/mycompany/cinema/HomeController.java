@@ -21,7 +21,8 @@ import com.mycompany.movie.ReservationRepository;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import com.mycompany.movie.TicketRepository;
-
+import com.mycompany.movie.RoomRepository;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class HomeController {
@@ -30,17 +31,20 @@ public class HomeController {
     private final SessionRepository sessionRepository;
     private final ReservationRepository reservationRepository;
     private final TicketRepository ticketRepository;
+    private final RoomRepository roomRepository;
 
     public HomeController(
         MovieRepository movieRepository,
         SessionRepository sessionRepository,
         ReservationRepository reservationRepository,
-        TicketRepository ticketRepository) {
+        TicketRepository ticketRepository,
+        RoomRepository roomRepository) {
 
     this.movieRepository = movieRepository;
     this.sessionRepository = sessionRepository;
     this.reservationRepository = reservationRepository;
     this.ticketRepository = ticketRepository;
+    this.roomRepository = roomRepository;
 }
 
     @GetMapping("/")
@@ -317,4 +321,50 @@ public class HomeController {
 
         return movies;
     }
+    
+    @GetMapping("/admin/sessions/create")
+    public String createSessionPage(Model model) {
+
+    model.addAttribute("movies", movieRepository.findAll());
+    model.addAttribute("rooms", roomRepository.findAll());
+
+    return "admin-session-create";
+}
+    
+    private double getTicketPrice(String priceType) {
+
+    if (priceType.equals("IMAX")) {
+        return 12.00;
+    }
+
+    return 8.50;
+}
+    
+  @PostMapping("/admin/sessions/create")
+public String createSession(
+        @RequestParam("movieId") int movieId,
+        @RequestParam("roomId") int roomId,
+        @RequestParam("time") LocalTime time,
+        @RequestParam("priceType") String priceType) {
+
+    Movie movie = movieRepository.findById(movieId).orElse(null);
+    Room room = roomRepository.findById(roomId).orElse(null);
+
+    if (movie == null || room == null) {
+        return "redirect:/admin/sessions/create";
+    }
+
+    double ticketPrice = getTicketPrice(priceType);
+
+    Session session = new Session(
+            movie,
+            time,
+            room,
+            ticketPrice
+    );
+
+    sessionRepository.save(session);
+
+    return "redirect:/admin/sessions/create";
+}  
 }

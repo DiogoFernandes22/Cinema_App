@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CineHub - Criar Sessão</title>
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+    <main class="container">
+
+        <section style="
+            max-width: 650px;
+            margin: 70px auto;
+            background: #151515;
+            padding: 40px;
+            border-radius: 12px;
+        ">
+
+            <p style="
+                margin: 0 0 8px;
+                font-size: 13px;
+                letter-spacing: 2px;
+                color: #aaa;
+            ">
+                ÁREA DE FUNCIONÁRIOS
+            </p>
+
+            <h1 style="
+                margin-top: 0;
+                margin-bottom: 10px;
+            ">
+                Criar sessão
+            </h1>
+
+            <p style="
+                color: #aaa;
+                margin-bottom: 35px;
+            ">
+                Configure uma nova sessão de cinema escolhendo o filme,
+                a sala e o horário.
+            </p>
+
+            <form action="/admin/sessions/create" method="post">
+
+                <div style="margin-bottom: 22px;">
+
+                    <label for="movie">
+                        Filme
+                    </label>
+
+                    <select id="movie"
+                            name="movieId"
+                            required
+                            style="
+                                width: 100%;
+                                margin-top: 8px;
+                                padding: 12px;
+                                border-radius: 6px;
+                                border: 1px solid #444;
+                                background: #222;
+                                color: white;
+                            ">
+
+                        <option value="">
+                            Selecionar filme
+                        </option>
+
+                        <option th:each="movie : ${movies}"
+                                th:value="${movie.id}"
+                                th:text="${movie.name}">
+                            Avatar
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div style="margin-bottom: 22px;">
+
+                    <label for="room">
+                        Sala
+                    </label>
+
+                    <select id="room"
+                            name="roomId"
+                            required
+                            style="
+                                width: 100%;
+                                margin-top: 8px;
+                                padding: 12px;
+                                border-radius: 6px;
+                                border: 1px solid #444;
+                                background: #222;
+                                color: white;
+                            ">
+
+                        <option value="">
+                            Selecionar sala
+                        </option>
+
+                        <option th:each="room : ${rooms}"
+                                th:value="${room.id}"
+                                th:text="${room.name + ' - ' + room.type}">
+                            Sala 1 - NORMAL
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div style="margin-bottom: 22px;">
+
+                    <label for="time">
+                        Hora da sessão
+                    </label>
+
+                    <input type="time"
+                           id="time"
+                           name="time"
+                           required
+                           style="
+                                width: 100%;
+                                box-sizing: border-box;
+                                margin-top: 8px;
+                                padding: 12px;
+                                border-radius: 6px;
+                                border: 1px solid #444;
+                                background: #222;
+                                color: white;
+                           ">
+
+                </div>
+
+                <div style="margin-bottom: 30px;">
+
+                    <label for="priceType">
+                        Tipo de preço
+                    </label>
+
+                    <select id="priceType"
+                            name="priceType"
+                            required
+                            style="
+                                width: 100%;
+                                margin-top: 8px;
+                                padding: 12px;
+                                border-radius: 6px;
+                                border: 1px solid #444;
+                                background: #222;
+                                color: white;
+                            ">
+
+                        <option value="">
+                            Selecionar tipo de preço
+                        </option>
+
+                        <option value="NORMAL">
+                            Normal — 8,50 €
+                        </option>
+
+                        <option value="IMAX">
+                            IMAX — 12,00 €
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <button type="submit"
+                        style="
+                            width: 100%;
+                            padding: 14px;
+                            border: none;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-size: 16px;
+                            font-weight: bold;
+                        ">
+                    Criar sessão
+                </button>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

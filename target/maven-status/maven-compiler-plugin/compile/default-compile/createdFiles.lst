@@ -24,4 +24,5 @@ com\mycompany\cinema\DataBaseTest.class
 com\mycompany\movie\Room.class
 com\mycompany\movie\GenreService.class
 com\mycompany\movie\Reservation.class
+com\mycompany\movie\RoomRepository.class
 com\mycompany\movie\Seat.class

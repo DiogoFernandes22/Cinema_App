@@ -28,26 +28,21 @@ public class MovieController {
 }
 
     @GetMapping("/admin/movies/search")
-    public String searchMovie(
-            @RequestParam String title,
-            Model model) throws Exception {
+public String searchMovie(
+        @RequestParam String title,
+        Model model) throws Exception {
 
-        Movie movie = movieImportService.searchMovieFromTmdb(title);
+    Movie movie = movieImportService.searchMovieFromTmdb(title);
 
-        Movie savedMovie = movieImportService.saveMovie(movie);
+    model.addAttribute("movie", movie);
 
-        model.addAttribute("movie", savedMovie);
-
-        if (movieImportService.isMovieAlreadyExists()) {
-            model.addAttribute("message",
-            "Este filme já existe no CineHub.");
-        } else {
-            model.addAttribute("message",
-            "Filme adicionado ao CineHub com sucesso.");
-}
-
-        return "movie-search";
+    if (movieRepository.findByTmdbId(movie.getTmdbId()) != null) {
+        model.addAttribute("message",
+                "Este filme já existe no CineHub.");
     }
+
+    return "movie-search";
+}
     
     @GetMapping("/admin/movies/import")
     public String importMovie(
