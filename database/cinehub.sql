@@ -273,7 +273,7 @@ CREATE TABLE `sessions` (
   `movie_id` int NOT NULL,
   `room_id` int NOT NULL,
   `session_time` time NOT NULL,
-  `ticket_price` decimal(10,2) NOT NULL,
+  `price_type` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `movie_id` (`movie_id`),
   KEY `fk_sessions_room` (`room_id`),
@@ -288,10 +288,18 @@ CREATE TABLE `sessions` (
 
 LOCK TABLES `sessions` WRITE;
 /*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
-INSERT INTO `sessions` VALUES (1,7,1,'18:00:00',8.50),(2,7,1,'21:00:00',8.50),(3,8,2,'18:30:00',8.00),(4,8,2,'21:30:00',8.00),(5,9,3,'18:00:00',12.00),(6,9,3,'21:30:00',12.00),(7,8,1,'20:30:00',8.50);
+INSERT INTO `sessions` VALUES
+(1,7,1,'18:00:00','NORMAL'),
+(2,7,1,'21:00:00','NORMAL'),
+(3,8,2,'18:30:00','NORMAL'),
+(4,8,2,'21:30:00','NORMAL'),
+(5,9,3,'18:00:00','IMAX'),
+(6,9,3,'21:30:00','IMAX'),
+(7,8,1,'20:30:00','NORMAL'),
+(8,7,1,'20:30:00','NORMAL'),
+(9,11,3,'20:30:00','IMAX');
 /*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
 UNLOCK TABLES;
-
 --
 -- Table structure for table `studio`
 --

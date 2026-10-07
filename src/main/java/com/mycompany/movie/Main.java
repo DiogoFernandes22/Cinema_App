@@ -1,4 +1,4 @@
-package com.mycompany.movie;
+/*package com.mycompany.movie;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -30,30 +30,31 @@ public class Main {
     movie.setRate(7.8);
     movie.setDirector(director);
     movie.setStudio(studio);
+*/
 
         // Criar sala NORMAL
-        Room room = new Room("NORMAL");
+        // Room room = new Room("NORMAL");
 
         // Criar sessão
-        Session session = new Session(movie, LocalTime.of(21, 0), room, 8.0);
+        //Session session = new Session(movie, LocalTime.of(21, 0), room, 8.0);
 
         // Criar reserva associada ao utilizador e à sessão
-        Reservation reservation = new Reservation(session, user);
+       // Reservation reservation = new Reservation(session, user);
 
         // Começar a escolher lugares
-        reservation.chooseSeat();
+       // reservation.chooseSeat();
         
-        System.out.println("Reserva pertence a: " + reservation.getUser());
+        //System.out.println("Reserva pertence a: " + reservation.getUser());
         
-        for(Ticket ticket : reservation.getMyTickets()){
-        System.out.println(
+        //for(Ticket ticket : reservation.getMyTickets()){
+        /*System.out.println(
         ticket.getSeat() + " - " +
         ticket.getTypeTicket() + " - " +
         ticket.ticketPrice() + "€"
     );
         }
     }
-    }
+    }*/
 
 // Página Principal:  http://localhost:8080/
 // Lista de filmes:  http://localhost:8080/movies

@@ -5,6 +5,7 @@ import com.mycompany.movie.Room;
 import com.mycompany.movie.Session;
 import com.mycompany.movie.Reservation;
 import com.mycompany.movie.Seat;
+import com.mycompany.movie.PriceType;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import org.springframework.stereotype.Controller;
@@ -34,79 +35,90 @@ public class HomeController {
     private final RoomRepository roomRepository;
 
     public HomeController(
-        MovieRepository movieRepository,
-        SessionRepository sessionRepository,
-        ReservationRepository reservationRepository,
-        TicketRepository ticketRepository,
-        RoomRepository roomRepository) {
+            MovieRepository movieRepository,
+            SessionRepository sessionRepository,
+            ReservationRepository reservationRepository,
+            TicketRepository ticketRepository,
+            RoomRepository roomRepository) {
 
-    this.movieRepository = movieRepository;
-    this.sessionRepository = sessionRepository;
-    this.reservationRepository = reservationRepository;
-    this.ticketRepository = ticketRepository;
-    this.roomRepository = roomRepository;
-}
+        this.movieRepository = movieRepository;
+        this.sessionRepository = sessionRepository;
+        this.reservationRepository = reservationRepository;
+        this.ticketRepository = ticketRepository;
+        this.roomRepository = roomRepository;
+    }
 
     @GetMapping("/")
     public String home(Model model) {
 
-    List<Session> sessions = sessionRepository.findAll();
+        List<Session> sessions = sessionRepository.findAll();
 
-    List<Movie> movies = movieRepository.findAll();
+        List<Movie> movies = movieRepository.findAll();
 
-    // Filme que aparece inicialmente na página
-    Movie movie = movies.get(0);
+        // Filme que aparece inicialmente na página
+        Movie movie = movies.get(0);
 
-    // Sessão selecionada inicialmente: 21:00
-    Session movieSession = sessions.get(1);
+        // Sessão selecionada inicialmente: 21:00
+        Session movieSession = sessions.get(1);
 
-    // Agrupar as sessões por filme
-    Map<Movie, List<Session>> sessionsByMovie = new LinkedHashMap<>();
+        // Agrupar as sessões por filme
+        Map<Movie, List<Session>> sessionsByMovie = new LinkedHashMap<>();
 
-    for (Session session : sessions) {
+        for (Session session : sessions) {
 
-        Movie sessionMovie = session.getMovie();
+            Movie sessionMovie = session.getMovie();
 
-        sessionsByMovie
-                .computeIfAbsent(sessionMovie, key -> new ArrayList<>())
-                .add(session);
+            sessionsByMovie
+                    .computeIfAbsent(sessionMovie, key -> new ArrayList<>())
+                    .add(session);
+        }
+
+        model.addAttribute("movies", movies);
+        model.addAttribute("movie", movie);
+        model.addAttribute("movieSession", movieSession);
+        model.addAttribute("sessions", sessions);
+        model.addAttribute("sessionsByMovie", sessionsByMovie);
+
+        return "index";
     }
-
-    model.addAttribute("movies", movies);
-    model.addAttribute("movie", movie);
-    model.addAttribute("movieSession", movieSession);
-    model.addAttribute("sessions", sessions);
-    model.addAttribute("sessionsByMovie", sessionsByMovie);
-
-    return "index";
-}
 
     @GetMapping("/session")
     public String selectSession(
-        @RequestParam("id") int id,
-        Model model) {
+            @RequestParam("id") int id,
+            Model model) {
 
-    System.out.println("Sessão escolhida: " + id);
+        System.out.println("Sessão escolhida: " + id);
 
-    Session selectedSession = sessionRepository.findById(id).orElse(null);
-    
-    System.out.println("Sala: " + selectedSession.getRoom().getName());
-    System.out.println("Lugares: " + selectedSession.getRoom().GetSeats().length);
-    
-    System.out.println("Primeiro lugar: "
-        + selectedSession.getRoom().GetSeats()[0][0]);
+        Session selectedSession =
+                sessionRepository.findById(id).orElse(null);
 
-    System.out.println("Último lugar: "
-        + selectedSession.getRoom().GetSeats()[9][11]);
+        if (selectedSession == null) {
+            return "redirect:/";
+        }
 
-    if (selectedSession == null) {
-        return "redirect:/";
+        System.out.println(
+                "Sala: " + selectedSession.getRoom().getName()
+        );
+
+        System.out.println(
+                "Lugares: "
+                + selectedSession.getRoom().GetSeats().length
+        );
+
+        System.out.println(
+                "Primeiro lugar: "
+                + selectedSession.getRoom().GetSeats()[0][0]
+        );
+
+        System.out.println(
+                "Último lugar: "
+                + selectedSession.getRoom().GetSeats()[9][11]
+        );
+
+        model.addAttribute("movieSession", selectedSession);
+
+        return "booking";
     }
-
-    model.addAttribute("movieSession", selectedSession);
-
-    return "booking";
-}
 
     @GetMapping("/reserve")
     public String reserve(
@@ -115,127 +127,144 @@ public class HomeController {
             @RequestParam("estudante") int estudante,
             @RequestParam("crianca") int crianca,
             @RequestParam("seats") String seats,
-            Model model, 
+            Model model,
             HttpSession httpSession) {
 
         System.out.println("Sessão: " + sessionId);
         System.out.println("Lugares escolhidos: " + seats);
 
         Session selectedSession =
-            sessionRepository.findById(sessionId).orElse(null);
+                sessionRepository.findById(sessionId).orElse(null);
 
         if (selectedSession == null) {
             return "redirect:/";
         }
-        
-        //Criar a reserva
-        Reservation reservation = new Reservation(selectedSession, null);
-        
-        //Criar lista dos tipos de bilhete
-        ArrayList<String>ticketTypes = new ArrayList<>();
-        
-        for (int i = 0; i < normal; i++){
+
+        // Criar a reserva
+        Reservation reservation =
+                new Reservation(selectedSession, null);
+
+        // Criar lista dos tipos de bilhete
+        ArrayList<String> ticketTypes = new ArrayList<>();
+
+        for (int i = 0; i < normal; i++) {
             ticketTypes.add("NORMAL");
         }
-        
-        for (int i = 0; i < estudante; i++){
+
+        for (int i = 0; i < estudante; i++) {
             ticketTypes.add("ESTUDANTE");
         }
-        
-        for (int i = 0; i < crianca; i++){
+
+        for (int i = 0; i < crianca; i++) {
             ticketTypes.add("CRIANÇA");
         }
-        
-        //Separar os lugares
+
+        // Separar os lugares
         String[] selectedSeats = seats.split(",");
-        
-        //Associar cada lugar ao respetivo bilhete
-        for(int i = 0; i < selectedSeats.length; i++){
-            
+
+        // Associar cada lugar ao respetivo bilhete
+        for (int i = 0; i < selectedSeats.length; i++) {
+
             String seatName = selectedSeats[i];
-            
-            for(Seat[] row : selectedSession.getRoom().GetSeats()){
-                
-                for(Seat seat : row){
-                    
+
+            for (Seat[] row : selectedSession.getRoom().GetSeats()) {
+
+                for (Seat seat : row) {
+
                     if (seat.toString().equals(seatName)) {
 
-                        boolean occupied = ticketRepository.existsBySessionIdAndSeatId(selectedSession.getId(),seat.getId());
+                        boolean occupied =
+                                ticketRepository.existsBySessionIdAndSeatId(
+                                        selectedSession.getId(),
+                                        seat.getId()
+                                );
+
                         if (occupied) {
-                            System.out.println("Lugar " + seatName + " já está ocupado.");
+
+                            System.out.println(
+                                    "Lugar "
+                                    + seatName
+                                    + " já está ocupado."
+                            );
+
                             continue;
                         }
 
-    String ticketType = ticketTypes.get(i);
+                        String ticketType = ticketTypes.get(i);
 
-    reservation.addTicket(ticketType, seat);
-}
+                        reservation.addTicket(ticketType, seat);
+                    }
                 }
             }
         }
-        
-        
-        //Guardar a reserva na base de dados
-        reservationRepository.save(reservation);
+
+        /*
+         * Só guardar a reserva se tiver pelo menos
+         * um bilhete.
+         */
         if (reservation.getMyTickets().isEmpty()) {
             return "redirect:/";
         }
-        //Guardar a reserva na base de dados
+
+        // Guardar a reserva na base de dados
         reservationRepository.save(reservation);
 
-        //Enviar a Reservation para o confirmation.html
+        // Enviar a Reservation para o confirmation.html
         model.addAttribute("reservation", reservation);
 
-        //Guardar temporariamente a reserva para o /payment
+        // Guardar temporariamente a reserva para o /payment
         httpSession.setAttribute("reservation", reservation);
 
         return "confirmation";
     }
-    
+
     @GetMapping("/payment")
-    public String payment(HttpSession httpSession, Model model){
-        
+    public String payment(
+            HttpSession httpSession,
+            Model model) {
+
         Reservation reservation =
                 (Reservation) httpSession.getAttribute("reservation");
-        
-        if(reservation == null){
+
+        if (reservation == null) {
             return "redirect:/";
         }
-        
+
         model.addAttribute("reservation", reservation);
-        
+
         return "payment";
     }
-    
+
     @GetMapping("/pay")
     public String pay(
-        @RequestParam("paymentMethod") String paymentMethod,
-        HttpSession httpSession,
-        Model model) {
+            @RequestParam("paymentMethod") String paymentMethod,
+            HttpSession httpSession,
+            Model model) {
 
-    Reservation reservation =
-            (Reservation) httpSession.getAttribute("reservation");
+        Reservation reservation =
+                (Reservation) httpSession.getAttribute("reservation");
 
-    if (reservation == null) {
-        return "redirect:/";
+        if (reservation == null) {
+            return "redirect:/";
+        }
+
+        // Alterar os dados da reserva
+        reservation.setPaymentMethod(paymentMethod);
+        reservation.setPaid(true);
+        reservation.setConfirmed(true);
+
+        // Guardar as alterações na base de dados
+        reservationRepository.save(reservation);
+
+        model.addAttribute("reservation", reservation);
+
+        return "confirmed";
     }
-
-    // Alterar os dados da reserva
-    reservation.setPaymentMethod(paymentMethod);
-    reservation.setPaid(true);
-    reservation.setConfirmed(true);
-
-    // Guardar as alterações na base de dados
-    reservationRepository.save(reservation);
-
-    model.addAttribute("reservation", reservation);
-
-    return "confirmed";
-}
 
     private ArrayList<Session> createSessions() {
 
         ArrayList<String> cast = new ArrayList<>();
+
         cast.add("Sam Worthington");
         cast.add("Zoe Saldana");
 
@@ -257,13 +286,28 @@ public class HomeController {
         Room room = new Room("NORMAL");
 
         Session session1 =
-                new Session(movie, LocalTime.of(18, 0), room, 8.0);
+                new Session(
+                        movie,
+                        LocalTime.of(18, 0),
+                        room,
+                        PriceType.NORMAL
+                );
 
         Session session2 =
-                new Session(movie, LocalTime.of(21, 0), room, 8.0);
+                new Session(
+                        movie,
+                        LocalTime.of(21, 0),
+                        room,
+                        PriceType.NORMAL
+                );
 
         Session session3 =
-                new Session(movie, LocalTime.of(23, 30), room, 8.0);
+                new Session(
+                        movie,
+                        LocalTime.of(23, 30),
+                        room,
+                        PriceType.NORMAL
+                );
 
         ArrayList<Session> sessions = new ArrayList<>();
 
@@ -277,6 +321,7 @@ public class HomeController {
     private ArrayList<Movie> createMovies() {
 
         ArrayList<String> cast1 = new ArrayList<>();
+
         cast1.add("Sam Worthington");
         cast1.add("Zoe Saldana");
 
@@ -296,6 +341,7 @@ public class HomeController {
         movie1.setStudio(studio1);
 
         ArrayList<String> cast2 = new ArrayList<>();
+
         cast2.add("Matthew McConaughey");
         cast2.add("Jessica Chastain");
 
@@ -321,50 +367,63 @@ public class HomeController {
 
         return movies;
     }
-    
+
     @GetMapping("/admin/sessions/create")
     public String createSessionPage(Model model) {
 
-    model.addAttribute("movies", movieRepository.findAll());
-    model.addAttribute("rooms", roomRepository.findAll());
+        model.addAttribute(
+                "movies",
+                movieRepository.findAll()
+        );
 
-    return "admin-session-create";
-}
-    
-    private double getTicketPrice(String priceType) {
+        model.addAttribute(
+                "rooms",
+                roomRepository.findAll()
+        );
 
-    if (priceType.equals("IMAX")) {
-        return 12.00;
+        return "admin-session-create";
     }
 
-    return 8.50;
-}
-    
-  @PostMapping("/admin/sessions/create")
-public String createSession(
-        @RequestParam("movieId") int movieId,
-        @RequestParam("roomId") int roomId,
-        @RequestParam("time") LocalTime time,
-        @RequestParam("priceType") String priceType) {
+    @PostMapping("/admin/sessions/create")
+    public String createSession(
+            @RequestParam("movieId") int movieId,
+            @RequestParam("roomId") int roomId,
+            @RequestParam("time") LocalTime time,
+            @RequestParam("priceType") String priceType) {
 
-    Movie movie = movieRepository.findById(movieId).orElse(null);
-    Room room = roomRepository.findById(roomId).orElse(null);
+        Movie movie =
+                movieRepository.findById(movieId).orElse(null);
 
-    if (movie == null || room == null) {
+        Room room =
+                roomRepository.findById(roomId).orElse(null);
+
+        if (movie == null || room == null) {
+            return "redirect:/admin/sessions/create";
+        }
+
+        /*
+         * O tipo de preço é determinado pelo tipo da sala.
+         *
+         * Sala IMAX -> PriceType.IMAX
+         * Qualquer outra sala -> PriceType.NORMAL
+         */
+        PriceType sessionPriceType;
+
+        if (room.getType().equalsIgnoreCase("IMAX")) {
+            sessionPriceType = PriceType.IMAX;
+        } else {
+            sessionPriceType = PriceType.NORMAL;
+        }
+
+        Session session = new Session(
+                movie,
+                time,
+                room,
+                sessionPriceType
+        );
+
+        sessionRepository.save(session);
+
         return "redirect:/admin/sessions/create";
     }
-
-    double ticketPrice = getTicketPrice(priceType);
-
-    Session session = new Session(
-            movie,
-            time,
-            room,
-            ticketPrice
-    );
-
-    sessionRepository.save(session);
-
-    return "redirect:/admin/sessions/create";
-}  
 }

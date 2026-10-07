@@ -3,11 +3,14 @@ com\mycompany\movie\MovieRepository.class
 com\mycompany\movie\MovieImportService.class
 com\mycompany\cinema\TmdbMovie.class
 com\mycompany\movie\Session.class
+com\mycompany\cinema\RoomItem.class
 com\mycompany\movie\User.class
 com\mycompany\movie\Ticket.class
 com\mycompany\cinema\TmdbService.class
+com\mycompany\movie\PriceType.class
 com\mycompany\movie\GenreRepository.class
 com\mycompany\cinema\HomeController.class
+com\mycompany\cinema\MovieItem.class
 com\mycompany\movie\Studio.class
 com\mycompany\movie\Director.class
 com\mycompany\cinema\StaffApplication.class
@@ -19,7 +22,6 @@ com\mycompany\cinema\AdminSessionController.class
 com\mycompany\movie\ReservationRepository.class
 com\mycompany\cinema\CinemaApplication.class
 com\mycompany\movie\Genre.class
-com\mycompany\movie\Main.class
 com\mycompany\cinema\TmdbTest.class
 com\mycompany\movie\StudioRepository.class
 com\mycompany\cinema\DataBaseTest.class

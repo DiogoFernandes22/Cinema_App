@@ -15,58 +15,60 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class StaffApplication {
-    
+
     private static String getRoomsFromBackend() throws Exception {
 
-    HttpClient client = HttpClient.newHttpClient();
+        HttpClient client = HttpClient.newHttpClient();
 
-    HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:8080/api/admin/sessions/rooms"))
-            .GET()
-            .build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/api/admin/sessions/rooms"))
+                .GET()
+                .build();
 
-    HttpResponse<String> response =
-            client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response =
+                client.send(request, HttpResponse.BodyHandlers.ofString());
 
-    return response.body();
-}
-    
+        return response.body();
+    }
+
     private static String getMoviesFromBackend() throws Exception {
 
-    HttpClient client = HttpClient.newHttpClient();
+        HttpClient client = HttpClient.newHttpClient();
 
-    HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:8080/api/admin/sessions/movies"))
-            .GET()
-            .build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/api/admin/sessions/movies"))
+                .GET()
+                .build();
 
-    HttpResponse<String> response =
-            client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response =
+                client.send(request, HttpResponse.BodyHandlers.ofString());
 
-    return response.body();
-}
+        return response.body();
+    }
 
     public static void main(String[] args) {
-        
+
         try {
             String rooms = getRoomsFromBackend();
+
             System.out.println("Salas recebidas do backend:");
             System.out.println(rooms);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         JFrame frame = new JFrame("CineHub - Área de Funcionários");
 
-        frame.setSize(500, 350);
+        frame.setSize(500, 300);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
 
-        JPanel panel = new JPanel(new GridLayout(5, 2, 10, 10));
+        JPanel panel = new JPanel(new GridLayout(4, 2, 10, 10));
 
         JLabel movieLabel = new JLabel("Filme:");
 
-        JComboBox<String> movieBox = new JComboBox<>();
+        JComboBox<MovieItem> movieBox = new JComboBox<>();
 
         try {
             String moviesJson = getMoviesFromBackend();
@@ -75,8 +77,11 @@ public class StaffApplication {
             JsonNode movies = mapper.readTree(moviesJson);
 
             for (JsonNode movie : movies) {
+
+                int id = movie.get("id").asInt();
                 String name = movie.get("name").asText();
-                movieBox.addItem(name);
+
+                movieBox.addItem(new MovieItem(id, name));
             }
 
         } catch (Exception e) {
@@ -85,31 +90,88 @@ public class StaffApplication {
 
         JLabel roomLabel = new JLabel("Sala:");
 
-        JComboBox<String> roomBox = new JComboBox<>();
+        JComboBox<RoomItem> roomBox = new JComboBox<>();
 
         try {
             String roomsJson = getRoomsFromBackend();
+
+            System.out.println("JSON DAS SALAS:");
+            System.out.println(roomsJson);
 
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rooms = mapper.readTree(roomsJson);
 
             for (JsonNode room : rooms) {
+
+                int id = room.get("id").asInt();
                 String name = room.get("name").asText();
-                roomBox.addItem(name);
+                String type = room.get("type").asText();
+
+                System.out.println(
+                        "Sala: " + name + " | Tipo: " + type
+                );
+
+                roomBox.addItem(
+                        new RoomItem(id, name, type)
+                );
             }
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         JLabel timeLabel = new JLabel("Hora:");
+
         JTextField timeField = new JTextField("20:00");
 
-        JLabel priceLabel = new JLabel("Tipo de preço:");
-        JComboBox<String> priceBox =
-                new JComboBox<>(new String[]{"NORMAL", "IMAX"});
-
         JButton createButton = new JButton("Criar sessão");
+
+        createButton.addActionListener(e -> {
+
+            MovieItem selectedMovie =
+                    (MovieItem) movieBox.getSelectedItem();
+
+            RoomItem selectedRoom =
+                    (RoomItem) roomBox.getSelectedItem();
+
+            String time = timeField.getText();
+
+            if (selectedMovie == null || selectedRoom == null) {
+                return;
+            }
+
+            try {
+
+                HttpClient client = HttpClient.newHttpClient();
+
+                String url =
+                        "http://localhost:8080/api/admin/sessions"
+                        + "?movieId=" + selectedMovie.getId()
+                        + "&roomId=" + selectedRoom.getId()
+                        + "&time=" + time;
+
+                HttpRequest request =
+                        HttpRequest.newBuilder()
+                                .uri(URI.create(url))
+                                .POST(
+                                    HttpRequest.BodyPublishers.noBody()
+                                )
+                                .build();
+
+                HttpResponse<String> response =
+                        client.send(
+                            request,
+                            HttpResponse.BodyHandlers.ofString()
+                        );
+
+                System.out.println("Resposta do backend:");
+                System.out.println(response.statusCode());
+                System.out.println(response.body());
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
 
         panel.add(movieLabel);
         panel.add(movieBox);
@@ -119,9 +181,6 @@ public class StaffApplication {
 
         panel.add(timeLabel);
         panel.add(timeField);
-
-        panel.add(priceLabel);
-        panel.add(priceBox);
 
         panel.add(new JLabel());
         panel.add(createButton);
