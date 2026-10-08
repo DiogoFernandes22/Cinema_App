@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>CineHub</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
@@ -23,7 +23,7 @@
             <a href="#cinema">O Cinema</a>
         </nav>
 
-        <button class="login-button">
+        <button class="login-button" type="button">
             Entrar
         </button>
 
@@ -38,7 +38,8 @@
                 EM EXIBIÇÃO
             </p>
 
-            <h1 th:text="${movie.name}">
+            <h1 th:if="${movie != null}"
+                th:text="${movie.name}">
                 AVATAR
             </h1>
 
@@ -46,7 +47,7 @@
                 Uma experiência cinematográfica num mundo extraordinário
             </p>
 
-            <div class="movie-info">
+            <div class="movie-info" th:if="${movie != null}">
 
                 <span th:text="${movie.releaseDate}">
                     2009
@@ -62,9 +63,9 @@
 
             </div>
 
-            <button class="primary-button">
+            <a class="primary-button" href="#sessoes">
                 Ver sessões
-            </button>
+            </a>
 
         </div>
 
@@ -76,7 +77,6 @@
         <div class="section-header">
 
             <div>
-
                 <p class="section-label">
                     NO CINEMA
                 </p>
@@ -84,10 +84,9 @@
                 <h2>
                     Agora em exibição
                 </h2>
-
             </div>
 
-            <a href="#">
+            <a href="#filmes">
                 Ver todos
             </a>
 
@@ -111,20 +110,18 @@
                     </h3>
 
                     <p>
-
                         <span th:each="genre : ${movie.genres}"
                               th:text="${genre.name + ' '}">
                         </span>
-
                     </p>
 
                     <p th:text="${'Avaliação: ' + movie.rate}">
                         Avaliação: 7.8
                     </p>
 
-                    <button class="secondary-button">
+                    <a class="secondary-button" href="#sessoes">
                         Ver sessões
-                    </button>
+                    </a>
 
                 </div>
 
@@ -140,7 +137,6 @@
         <div class="section-header">
 
             <div>
-
                 <p class="section-label">
                     PROGRAMAÇÃO
                 </p>
@@ -149,51 +145,118 @@
                     Sessões
                 </h2>
 
+                <p>
+                    Escolhe o dia em que queres ir ao cinema.
+                </p>
             </div>
 
         </div>
 
 
-        <div th:each="entry : ${sessionsByMovie}"
-             class="session">
+        <!-- Barra de seleção dos próximos 7 dias -->
+        <div class="session-date-selector">
 
-            <div>
+            <a th:each="date : ${availableDates}"
+               th:href="@{/(date=${#temporals.format(date, 'yyyy-MM-dd')})}"
+               class="session-date-option"
+               th:classappend="${date.equals(selectedDate)} ? ' selected' : ''">
 
-                <h3 th:text="${entry.key.name}">
+                <span class="session-date-day"
+                      th:text="${date.equals(today) ? 'Hoje' :
+                                date.equals(today.plusDays(1)) ? 'Amanhã' :
+                                #temporals.dayOfWeekNameShort(date)}">
+                    Hoje
+                </span>
+
+                <span class="session-date-number"
+                      th:text="${date.dayOfMonth}">
+                    8
+                </span>
+
+                <span class="session-date-month"
+                      th:text="${#temporals.monthNameShort(date)}">
+                    out.
+                </span>
+
+                <span class="session-date-indicator"
+                      th:if="${datesWithSessions.get(date)}">
+                    Sessões
+                </span>
+
+                <span class="session-date-indicator no-sessions"
+                      th:unless="${datesWithSessions.get(date)}">
+                    Sem sessões
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <!-- Data atualmente selecionada -->
+        <div class="selected-date-heading"
+             th:if="${selectedDate != null}">
+
+            <h3 th:text="${selectedDate.dayOfWeek.getDisplayName(
+                            T(java.time.format.TextStyle).FULL,
+                            T(java.util.Locale).forLanguageTag('pt-PT'))
+                            + ', ' + selectedDate.dayOfMonth
+                            + ' de ' + #temporals.monthName(selectedDate)
+                            + ' de ' + selectedDate.year}">
+                Sessões disponíveis
+            </h3>
+
+        </div>
+
+
+        <!-- Mensagem quando não existem sessões nesse dia -->
+        <div class="no-sessions-message"
+             th:if="${selectedDate != null and sessionsForSelectedDate.isEmpty()}">
+
+            <h3>Não existem sessões neste dia</h3>
+
+            <p>
+                Escolhe outra data para consultar a programação.
+            </p>
+
+        </div>
+
+
+        <!-- Sessões organizadas por filme e sala -->
+        <div class="daily-schedule"
+             th:if="${selectedDate != null and !sessionsForSelectedDate.isEmpty()}">
+
+            <div class="daily-movie"
+                 th:each="movieEntry : ${selectedDateSchedule}">
+
+                <h3 th:text="${movieEntry.key}">
                     Avatar
                 </h3>
 
-            </div>
+                <div class="daily-room"
+                     th:each="roomEntry : ${movieEntry.value}">
 
+                    <span class="daily-room-name"
+                          th:text="${roomEntry.key}">
+                        Sala 1
+                    </span>
 
-            <div class="session-times">
+                    <div class="daily-times">
 
-                <div th:each="currentSession : ${entry.value}">
+                        <form th:each="currentSession : ${roomEntry.value}"
+                              th:action="@{/session}"
+                              method="get">
 
-                    <p>
+                            <button type="submit"
+                                    name="id"
+                                    th:value="${currentSession.id}"
+                                    th:text="${#temporals.format(currentSession.time, 'HH:mm')}">
+                                18:00
+                            </button>
 
-                        <span th:text="${currentSession.date}">
-                            2026-10-10
-                        </span>
+                        </form>
 
-                        <span th:text="${currentSession.room.name}">
-                            Sala 1
-                        </span>
-
-                    </p>
-
-
-                    <form th:action="@{/session}"
-                          method="get">
-
-                        <button type="submit"
-                                name="id"
-                                th:text="${currentSession.time}"
-                                th:value="${currentSession.id}">
-                            21:00
-                        </button>
-
-                    </form>
+                    </div>
 
                 </div>
 
@@ -204,7 +267,7 @@
     </section>
 
 
-    <footer>
+    <footer id="cinema">
 
         <div class="logo">
             CINEHUB
@@ -215,6 +278,49 @@
         </p>
 
     </footer>
+    
+    <script>
+    document.addEventListener('click', function (event) {
+        const link = event.target.closest('.session-date-option');
+
+        if (!link) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const url = new URL(link.href, window.location.origin);
+        const sessionsSection = document.querySelector('#sessoes');
+        const scrollPosition = window.scrollY;
+
+        fetch(url.pathname + url.search)
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Não foi possível carregar as sessões.');
+                }
+
+                return response.text();
+            })
+            .then(function (html) {
+                const parser = new DOMParser();
+                const newDocument = parser.parseFromString(html, 'text/html');
+                const newSessions = newDocument.querySelector('#sessoes');
+
+                if (!newSessions || !sessionsSection) {
+                    throw new Error('A secção de sessões não foi encontrada.');
+                }
+
+                sessionsSection.innerHTML = newSessions.innerHTML;
+
+                window.history.pushState({}, '', url.pathname + url.search);
+
+                window.scrollTo(0, scrollPosition);
+            })
+            .catch(function () {
+                window.location.href = url.href;
+            });
+    });
+    </script>
 
 </body>
 </html>

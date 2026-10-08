@@ -1,307 +1,572 @@
-body{
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --background: #0b0d12;
+    --surface: #131720;
+    --surface-light: #1a202b;
+    --text: #f4f5f7;
+    --muted: #9ca5b5;
+    --accent: #e9b95e;
+    --accent-hover: #f5cc7d;
+    --border: rgba(255, 255, 255, 0.09);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px;
+}
+
+body {
     margin: 0;
-    font-family: Arial,Helvetica, sans-serif;
-    background-color: #0b0b0b;
-    color: white;
-}
-
-.navbar{
-  height: 80px;  
-  background-color: #0b0b0b;
-  /* flex para colocar tudo em linha, dessa divisão, partindo da direita */
-  display: flex;
-  /* para não ficarem encostados à direita */
-  align-items: center; 
-  /* Distrbui o espaço disponível entre estes três elementos */
-  justify-content: space-between;
-  /*Para dar espaço entre as margens da esquerda e direita, assim não ficam coladas ao canto do site. 0 é o top e 7 é o left/right*/
-  padding: 0 7%;
-}
-
-.logo{
-    font-size: 22px;
-    font-weight: bold;
-    letter-spacing: 3px;
-}
-/*O nav controla a organização dos links*/
-nav{
-    display: flex;
-    /*espaço entre os links*/
-    gap: 35px;
-}
-
-nav a{
-    color: #aaa;
-    /*Para não ter aquela cor azul e sublinhado dos links*/
-    text-decoration: none;
-    font-size: 15px;
-    transition: 0.2s;
-}
-/*Condição para o nav, quando o rato estiver por cima*/
-nav a:hover{
-    color: white;
-}
-
-.login-button{
-    background: transparent;
-    color: white;
-    /*1px espessura de linha, solid tipo de linha, #555 cor*/ 
-    border: 1px solid #555;
-    /*Cima/Baixo e Esquerda/Direita*/
-    padding: 10px 20px;
-    /*Para indicar que dá para clicar*/
-    cursor: pointer;
-    transition: 0.2s;
-}
-/*Condição para o Entrar, quando o rato estiver por cima*/
-.login-button:hover{
-    background: white;
-    color: black;
-    
-}
-
-.hero{
-    min-height: 600px;
-    display: flex;
-    align-items: center;
-    padding: 80px 7%;
-    /*Tem dois gradientes que na declaração estão deparados por ","*/
-    background: linear-gradient( 90deg,#0b0b0b 20%,rgba(11,11,11,0.8) 50%,rgba(11,11,11,0.2)), 
-        linear-gradient(135deg,#18251c,#345c43,#111);
-}
-
-.hero-content{
-    max-width: 550px;
-}
-
-.small-title{
-    font-size: 13px;
-    letter-spacing: 3px;
-    color: #aaa;
-}
-
-.hero h1{
-    font-size: 80px;
-    letter-spacing: 5px;
-    margin: 10px 0;
-    color: white;
-}
-
-.description{
-    color: #ccc;
-    font-size: 18px;
+    background: var(--background);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
     line-height: 1.6;
 }
 
-.movie-info{
-    /*para ficarem lado a lado*/
-    display: flex;
-    gap: 20px;
-    color: #aaa;
-    margin: 25px 0;
-}
-
-.primary-button{
-    background: white;
-    color: black;
-    border: none;
-    padding: 14px 28px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.primary-button:hover{
-    background: black;
-    color: white;
-}
-
-.section{
-    padding: 80px 7%;
-    background-color: #0b0b0b;
-}
-
-.section-header{
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-}
-
-.section-header h2{
-    font-size: 36px;
-    margin: 5px 0;
-}
-
-.section-label{
-    color: #888;
-    font-size: 12px;
-    letter-spacing: 3px;
-}
-
-.section-header a{
-    color: #aaa;
+a {
+    color: inherit;
     text-decoration: none;
-    transition: 0.2s;
 }
 
-.section-header a:hover{
-    color: white;
+button {
+    font: inherit;
 }
 
-.movies{
-    display: grid;
-    /*Cria três colunas iguais*/
-    grid-template-columns: repeat(3, 1fr);
-    /*Espaço entre os cartões*/
-    gap: 25px;
-}
-
-.movie-card{
-    background-color: #151515;
-}
-
-.poster{
-    height: 360px;
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    padding: 20px max(6%, calc((100% - 1200px) / 2));
+    background: rgba(11, 13, 18, 0.92);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(18px);
+}
+
+.logo {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.55rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    white-space: nowrap;
+}
+
+.logo::first-letter {
+    color: var(--accent);
+}
+
+.navbar nav {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.navbar nav a {
+    color: var(--muted);
+    font-size: 0.92rem;
+    transition: color 0.2s ease;
+}
+
+.navbar nav a:hover,
+.section-header > a:hover {
+    color: var(--accent);
+}
+
+.login-button {
+    padding: 10px 20px;
+    color: var(--text);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+.login-button:hover {
+    border-color: var(--accent);
+}
+
+.hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 480px;
+    padding: 80px max(6%, calc((100% - 1200px) / 2));
+    overflow: hidden;
+    background:
+        radial-gradient(ellipse at 80% 35%, rgba(233, 185, 94, 0.13), transparent 35%),
+        linear-gradient(115deg, #171c27 0%, #0b0d12 68%);
+    border-bottom: 1px solid var(--border);
+}
+
+.hero::after {
+    position: absolute;
+    top: -120px;
+    right: -80px;
+    width: 480px;
+    height: 480px;
+    border: 1px solid rgba(233, 185, 94, 0.12);
+    border-radius: 50%;
+    box-shadow:
+        0 0 0 50px rgba(233, 185, 94, 0.025),
+        0 0 0 100px rgba(233, 185, 94, 0.02);
+    content: "";
+    pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 660px;
+}
+
+.small-title,
+.section-label {
+    margin: 0 0 12px;
+    color: var(--accent);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+}
+
+.hero h1 {
+    margin: 0;
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(3rem, 7vw, 5.8rem);
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.05;
+}
+
+.description {
+    max-width: 480px;
+    margin: 22px 0;
+    color: #c1c7d1;
+    font-size: 1.05rem;
+}
+
+.movie-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+
+.movie-info span {
+    padding: 6px 11px;
+    color: #dce0e8;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.83rem;
+}
+
+.primary-button,
+.secondary-button {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg,#333,#111);
+    padding: 11px 18px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    transition: background 0.2s ease, transform 0.2s ease;
 }
 
-.movie-card-info{
-    padding: 25px;
+.primary-button {
+    color: #17130b;
+    background: var(--accent);
 }
 
-.movie-card-info h3{
-    margin-top: 0;
-    font-size: 22px;
+.primary-button:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
 }
 
-.movie-card-info p{
-    color: #888;
+.section,
+.sessions-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 76px 28px;
 }
 
-.secondary-button{
-    margin-top: 15px;
-    background-color: transparent;
-    border: 1px solid #555;
-    color: white;
-    padding: 10px 18px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.secondary-button:hover{
-    background-color: white;
-    color: black;
-}
-
-.sessions-section{
-    background-color: #151515;
-    padding: 80px 7%;
-}
-
-.session{
+.section-header {
     display: flex;
+    align-items: end;
     justify-content: space-between;
-    align-items: center;
-    padding: 25px 0;
-    border-bottom: 1px solid #333;
+    gap: 24px;
+    margin-bottom: 30px;
 }
 
-.session h3{
+.section-header h2 {
     margin: 0;
-    font-size: 22px;
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    letter-spacing: -0.7px;
 }
 
-.session p{
-    color: #888;
+.section-header > a {
+    color: var(--muted);
+    font-size: 0.9rem;
 }
 
-.session-times{
+.movies {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 22px;
+}
+
+.movie-card {
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.movie-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(233, 185, 94, 0.4);
+}
+
+.poster {
     display: flex;
+    align-items: end;
+    min-height: 240px;
+    padding: 22px;
+    background:
+        linear-gradient(0deg, rgba(5, 7, 11, 0.9), transparent 80%),
+        radial-gradient(ellipse at top, #394354, #171c27 70%);
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.movie-card-info {
+    padding: 20px;
+}
+
+.movie-card-info h3 {
+    margin: 0 0 8px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.25rem;
+}
+
+.movie-card-info p {
+    margin: 8px 0;
+    color: var(--muted);
+    font-size: 0.88rem;
+}
+
+.secondary-button {
+    margin-top: 12px;
+    color: var(--text);
+    background: var(--surface-light);
+    border: 1px solid var(--border);
+}
+
+.secondary-button:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.sessions-section {
+    padding-top: 48px;
+}
+
+.sessions-section .section-header {
+    align-items: center;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.sessions-section .section-header > div > p:last-child {
+    margin: 10px 0 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.daily-schedule {
+    display: grid;
+    gap: 16px;
+}
+
+.daily-movie {
+    min-width: 0;
+    padding: 24px 26px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+}
+
+.daily-movie h3 {
+    margin: 0 0 18px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+}
+
+.daily-room {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    align-items: center;
+    gap: 18px;
+    padding: 15px 0;
+    border-top: 1px solid var(--border);
+}
+
+.daily-room-name {
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.daily-times {
+    display: flex;
+    flex-wrap: wrap;
     gap: 10px;
 }
 
-.session-times button{
-    background: transparent;
-    border: 1px solid #666;
-    color: white;
-    padding: 12px 20px;
+.daily-times form {
+    margin: 0;
+}
+
+.daily-times button {
+    min-width: 78px;
+    padding: 9px 14px;
+    color: var(--text);
+    background: #202633;
+    border: 1px solid #343d4d;
+    border-radius: 7px;
     cursor: pointer;
-    transition: 0.2s;
+    transition: all 0.2s ease;
 }
 
-.session-times button:hover{
-    background: white;
-    color: black;
+.daily-times button:hover {
+    color: #17130b;
+    background: var(--accent);
+    border-color: var(--accent);
+    transform: translateY(-2px);
 }
 
-footer{
-    padding: 50px 7%;
-    border-top: 1px solid #222;
-    color: #777;
+footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 30px max(6%, calc((100% - 1200px) / 2));
+    background: #080a0e;
+    border-top: 1px solid var(--border);
 }
 
-.seat-button {
-    margin: 4px;
-    padding: 8px 12px;
-    cursor: pointer;
+footer p {
+    color: var(--muted);
+    font-size: 0.88rem;
 }
 
-.seat-button.selected{
-    background-color: #f5c518;
-    color: black;
+@media (max-width: 700px) {
+    .navbar {
+        flex-wrap: wrap;
+        gap: 16px;
+        padding: 16px 5%;
+    }
+
+    .navbar nav {
+        order: 3;
+        width: 100%;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .navbar nav a {
+        font-size: 0.82rem;
+    }
+
+    .hero {
+        min-height: 400px;
+        padding: 65px 6%;
+    }
+
+    .hero h1 {
+        letter-spacing: -1px;
+    }
+
+    .section,
+    .sessions-section {
+        padding: 52px 5%;
+    }
+
+    .movies {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .poster {
+        min-height: 170px;
+        padding: 14px;
+        font-size: 1.1rem;
+    }
+
+    .movie-card-info {
+        padding: 14px;
+    }
+
+    .movie-card-info h3 {
+        font-size: 1.05rem;
+    }
+
+    .daily-movie {
+        padding: 18px;
+    }
+
+    .daily-room {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    footer {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 26px 5%;
+    }
 }
 
-@media (max-width: 768px){
-    .navbar{
-        padding: 0 5%;
-        gap: 15px;
-    }
-    
-    nav{
-        gap: 15px;
-    }
-    
-    .navbar a{
-        font-size: 13px;
-    }
-    
-    .hero{
-        padding: 60px 5%;
-        min-height: 500px;
-    }
-    
-    .hero h1{
-        font-size: 50px;
-    }
-    
-    .description{
-        font-size: 16px;
-    }
-    
-    .movies{
-        /*os 3 filmes deixam de estar lado a lado e passam a ficar 1 por linha*/
+@media (max-width: 380px) {
+    .movies {
         grid-template-columns: 1fr;
     }
-    
-    .session{
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 20px;
-    }
-    
-    .login-button{
-        padding: 8px 12px;
-        font-size: 13px;
-    }
-    
-    .movie-info{
-        gap: 10px;
-        /*Se o espaço ficar demasiado pequeno as informações do filme podem passar para a linha seguinte em vez de ficarem apertadas*/
-        flex-wrap: wrap;
-    }
+}
+/* Seletor de datas das sessões */
+.session-date-selector {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 12px;
+    margin: 28px 0;
 }
 
+.session-date-option {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 16px 8px;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    text-align: center;
+    transition: border-color 0.2s ease,
+                background 0.2s ease,
+                transform 0.2s ease;
+}
+
+.session-date-option:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.session-date-option.selected {
+    color: #17130b;
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.session-date-day {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.session-date-number {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.session-date-month {
+    font-size: 0.8rem;
+    text-transform: capitalize;
+}
+
+.session-date-indicator {
+    margin-top: 5px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #b9d9b9;
+}
+
+.session-date-option.selected .session-date-indicator {
+    color: #3f542b;
+}
+
+.session-date-indicator.no-sessions {
+    color: var(--muted);
+}
+
+.session-date-option.selected .session-date-indicator.no-sessions {
+    color: #65552f;
+}
+
+.selected-date-heading {
+    margin: 30px 0 20px;
+}
+
+.selected-date-heading h3 {
+    margin: 0;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.35rem;
+    text-transform: capitalize;
+}
+
+.no-sessions-message {
+    margin: 24px 0;
+    padding: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.no-sessions-message h3 {
+    margin-top: 0;
+}
+
+.no-sessions-message p {
+    margin-bottom: 0;
+    color: var(--muted);
+}
+
+@media (max-width: 700px) {
+    .session-date-selector {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .session-date-option {
+        padding: 12px 5px;
+    }
+
+    .session-date-number {
+        font-size: 1.6rem;
+    }
+
+    .session-date-day {
+        font-size: 0.78rem;
+    }
+
+    .session-date-indicator {
+        font-size: 0.62rem;
+    }
+}

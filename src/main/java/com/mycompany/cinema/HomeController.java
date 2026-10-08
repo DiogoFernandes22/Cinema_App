@@ -6,25 +6,28 @@ import com.mycompany.movie.Session;
 import com.mycompany.movie.Reservation;
 import com.mycompany.movie.Seat;
 import com.mycompany.movie.PriceType;
+import com.mycompany.movie.Director;
+import com.mycompany.movie.Studio;
+import com.mycompany.movie.MovieRepository;
+import com.mycompany.movie.SessionRepository;
+import com.mycompany.movie.ReservationRepository;
+import com.mycompany.movie.TicketRepository;
+import com.mycompany.movie.RoomRepository;
+
 import java.time.LocalTime;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Comparator;
+
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import jakarta.servlet.http.HttpSession;
-import com.mycompany.movie.Director;
-import com.mycompany.movie.Studio;
-import com.mycompany.movie.MovieRepository;
-import java.util.List;
-import com.mycompany.movie.SessionRepository;
-import com.mycompany.movie.ReservationRepository;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import com.mycompany.movie.TicketRepository;
-import com.mycompany.movie.RoomRepository;
-import java.time.Month;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
@@ -51,27 +54,148 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(
+            @RequestParam(name = "date", required = false) String dateParam,
+            Model model) {
 
         List<Session> sessions = sessionRepository.findAll();
 
+        sessions.sort(
+                Comparator
+                        .comparing(
+                                (Session s) -> s.getMovie().getName()
+                        )
+                        .thenComparing(
+                                Session::getDate,
+                                Comparator.nullsLast(Comparator.naturalOrder())
+                        )
+                        .thenComparing(Session::getTime)
+        );
+
+        LocalDate today = LocalDate.now();
+
+        // Preparar os próximos 7 dias para a barra de seleção.
+        List<LocalDate> availableDates = new ArrayList<>();
+
+        for (int i = 0; i < 7; i++) {
+            availableDates.add(today.plusDays(i));
+        }
+
+        // Por defeito, escolher hoje se houver sessões.
+        // Caso contrário, escolher a próxima data com sessões.
+        LocalDate selectedDate = null;
+
+        if (dateParam != null && !dateParam.isBlank()) {
+            try {
+                LocalDate requestedDate = LocalDate.parse(dateParam);
+
+                if (availableDates.contains(requestedDate)) {
+                    selectedDate = requestedDate;
+                }
+            } catch (Exception e) {
+                selectedDate = null;
+            }
+        }
+
+        if (selectedDate == null) {
+            selectedDate = availableDates.stream()
+                    .filter(date -> sessions.stream().anyMatch(
+                            session -> date.equals(session.getDate())
+                    ))
+                    .findFirst()
+                    .orElse(today);
+        }
+
+        // Obter apenas as sessões da data selecionada.
+        LocalDate finalSelectedDate = selectedDate;
+
+        List<Session> sessionsForSelectedDate =
+                sessions.stream()
+                        .filter(session ->
+                                session.getDate() != null
+                                && finalSelectedDate.equals(session.getDate())
+                        )
+                        .sorted(Comparator.comparing(Session::getTime))
+                        .toList();
+
+        // Organizar as sessões por filme e sala.
+        Map<String, Map<String, List<Session>>> selectedDateSchedule =
+                new LinkedHashMap<>();
+
+        for (Session session : sessionsForSelectedDate) {
+
+            String movieName = session.getMovie().getName();
+            String roomName = session.getRoom().getName();
+
+            selectedDateSchedule
+                    .computeIfAbsent(
+                            movieName,
+                            key -> new LinkedHashMap<>()
+                    )
+                    .computeIfAbsent(
+                            roomName,
+                            key -> new ArrayList<>()
+                    )
+                    .add(session);
+        }
+
+        // Indicar ao HTML quais dias têm sessões.
+        Map<LocalDate, Boolean> datesWithSessions = new LinkedHashMap<>();
+
+        for (LocalDate date : availableDates) {
+            boolean hasSessions = sessions.stream().anyMatch(
+                    session -> date.equals(session.getDate())
+            );
+
+            datesWithSessions.put(date, hasSessions);
+        }
+
         List<Movie> movies = movieRepository.findAll();
 
-        // Filme que aparece inicialmente na página
-        Movie movie = movies.get(0);
+        Movie movie = movies.isEmpty() ? null : movies.get(0);
 
-        // Sessão selecionada inicialmente: 21:00
-        Session movieSession = sessions.get(1);
+        Session movieSession =
+                sessions.size() > 1 ? sessions.get(1)
+                : sessions.isEmpty() ? null
+                : sessions.get(0);
 
-        // Agrupar as sessões por filme
-        Map<Movie, List<Session>> sessionsByMovie = new LinkedHashMap<>();
+        Map<Movie, List<Session>> sessionsByMovie =
+                new LinkedHashMap<>();
 
         for (Session session : sessions) {
 
             Movie sessionMovie = session.getMovie();
 
             sessionsByMovie
-                    .computeIfAbsent(sessionMovie, key -> new ArrayList<>())
+                    .computeIfAbsent(
+                            sessionMovie,
+                            key -> new ArrayList<>()
+                    )
+                    .add(session);
+        }
+
+        Map<String, Map<LocalDate, Map<String, List<Session>>>>
+                sessionsSchedule = new LinkedHashMap<>();
+
+        for (Session session : sessions) {
+
+            String movieName = session.getMovie().getName();
+            LocalDate date = session.getDate();
+            String roomName = session.getRoom().getName();
+
+            sessionsSchedule
+                    .computeIfAbsent(
+                            movieName,
+                            key -> new LinkedHashMap<>()
+                    )
+                    .computeIfAbsent(
+                            date,
+                            key -> new LinkedHashMap<>()
+                    )
+                    .computeIfAbsent(
+                            roomName,
+                            key -> new ArrayList<>()
+                    )
                     .add(session);
         }
 
@@ -80,6 +204,20 @@ public class HomeController {
         model.addAttribute("movieSession", movieSession);
         model.addAttribute("sessions", sessions);
         model.addAttribute("sessionsByMovie", sessionsByMovie);
+        model.addAttribute("sessionsSchedule", sessionsSchedule);
+
+        model.addAttribute("today", today);
+        model.addAttribute("availableDates", availableDates);
+        model.addAttribute("datesWithSessions", datesWithSessions);
+        model.addAttribute("selectedDate", selectedDate);
+        model.addAttribute(
+                "sessionsForSelectedDate",
+                sessionsForSelectedDate
+        );
+        model.addAttribute(
+                "selectedDateSchedule",
+                selectedDateSchedule
+        );
 
         return "index";
     }
@@ -145,11 +283,9 @@ public class HomeController {
             return "redirect:/";
         }
 
-        // Criar a reserva
         Reservation reservation =
                 new Reservation(selectedSession, null);
 
-        // Criar lista dos tipos de bilhete
         ArrayList<String> ticketTypes = new ArrayList<>();
 
         for (int i = 0; i < normal; i++) {
@@ -164,10 +300,8 @@ public class HomeController {
             ticketTypes.add("CRIANÇA");
         }
 
-        // Separar os lugares
         String[] selectedSeats = seats.split(",");
 
-        // Associar cada lugar ao respetivo bilhete
         for (int i = 0; i < selectedSeats.length; i++) {
 
             String seatName = selectedSeats[i];
@@ -185,13 +319,13 @@ public class HomeController {
                                 );
 
                         if (occupied) {
-
                             System.out.println(
-                                    "Lugar "
-                                    + seatName
-                                    + " já está ocupado."
+                                    "Lugar " + seatName + " já está ocupado."
                             );
+                            continue;
+                        }
 
+                        if (i >= ticketTypes.size()) {
                             continue;
                         }
 
@@ -203,21 +337,14 @@ public class HomeController {
             }
         }
 
-        /*
-         * Só guardar a reserva se tiver pelo menos
-         * um bilhete.
-         */
         if (reservation.getMyTickets().isEmpty()) {
             return "redirect:/";
         }
 
-        // Guardar a reserva na base de dados
         reservationRepository.save(reservation);
 
-        // Enviar a Reservation para o confirmation.html
         model.addAttribute("reservation", reservation);
 
-        // Guardar temporariamente a reserva para o /payment
         httpSession.setAttribute("reservation", reservation);
 
         return "confirmation";
@@ -253,12 +380,10 @@ public class HomeController {
             return "redirect:/";
         }
 
-        // Alterar os dados da reserva
         reservation.setPaymentMethod(paymentMethod);
         reservation.setPaid(true);
         reservation.setConfirmed(true);
 
-        // Guardar as alterações na base de dados
         reservationRepository.save(reservation);
 
         model.addAttribute("reservation", reservation);
@@ -409,12 +534,6 @@ public class HomeController {
             return "redirect:/admin/sessions/create";
         }
 
-        /*
-         * O tipo de preço é determinado pelo tipo da sala.
-         *
-         * Sala IMAX -> PriceType.IMAX
-         * Qualquer outra sala -> PriceType.NORMAL
-         */
         PriceType sessionPriceType;
 
         if (room.getType().equalsIgnoreCase("IMAX")) {
@@ -425,7 +544,7 @@ public class HomeController {
 
         Session session = new Session(
                 movie,
-                 LocalDate.of(2026, 10, 10),
+                LocalDate.of(2026, 10, 10),
                 time,
                 room,
                 sessionPriceType
