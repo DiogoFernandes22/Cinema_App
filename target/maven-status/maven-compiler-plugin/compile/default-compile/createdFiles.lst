@@ -1,6 +1,7 @@
 com\mycompany\movie\DirectorRepository.class
 com\mycompany\movie\MovieRepository.class
 com\mycompany\movie\MovieImportService.class
+com\mycompany\cinema\SessionItem.class
 com\mycompany\cinema\TmdbMovie.class
 com\mycompany\movie\Session.class
 com\mycompany\cinema\RoomItem.class

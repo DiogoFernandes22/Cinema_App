@@ -7,6 +7,7 @@ import com.mycompany.movie.Reservation;
 import com.mycompany.movie.Seat;
 import com.mycompany.movie.PriceType;
 import java.time.LocalTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import com.mycompany.movie.TicketRepository;
 import com.mycompany.movie.RoomRepository;
+import java.time.Month;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
@@ -132,6 +134,9 @@ public class HomeController {
 
         System.out.println("Sessão: " + sessionId);
         System.out.println("Lugares escolhidos: " + seats);
+        System.out.println("Normal: " + normal);
+        System.out.println("Estudante: " + estudante);
+        System.out.println("Criança: " + crianca);
 
         Session selectedSession =
                 sessionRepository.findById(sessionId).orElse(null);
@@ -288,6 +293,7 @@ public class HomeController {
         Session session1 =
                 new Session(
                         movie,
+                        LocalDate.of(2026, 10, 10),
                         LocalTime.of(18, 0),
                         room,
                         PriceType.NORMAL
@@ -296,6 +302,7 @@ public class HomeController {
         Session session2 =
                 new Session(
                         movie,
+                        LocalDate.of(2026, 10, 10),
                         LocalTime.of(21, 0),
                         room,
                         PriceType.NORMAL
@@ -304,6 +311,7 @@ public class HomeController {
         Session session3 =
                 new Session(
                         movie,
+                        LocalDate.of(2026, 10, 10),
                         LocalTime.of(23, 30),
                         room,
                         PriceType.NORMAL
@@ -417,6 +425,7 @@ public class HomeController {
 
         Session session = new Session(
                 movie,
+                 LocalDate.of(2026, 10, 10),
                 time,
                 room,
                 sessionPriceType

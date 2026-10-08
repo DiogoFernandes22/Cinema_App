@@ -17,6 +17,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Transient;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import java.time.LocalDate;
 
 /**
  *
@@ -44,6 +45,9 @@ public class Session {
     @Transient
     private ArrayList<Seat> occupiedSeats;
 
+    @Column(name = "session_date")
+    private LocalDate date;
+    
     @Enumerated(EnumType.STRING)
     @Column(name = "price_type")
     private PriceType priceType;
@@ -51,9 +55,10 @@ public class Session {
     public Session() {
     }
 
-    public Session(Movie movie, LocalTime time, Room room, PriceType priceType) {
+    public Session(Movie movie, LocalDate date, LocalTime time, Room room, PriceType priceType) {
 
         this.movie = movie;
+        this.date = date;
         this.time = time;
         this.room = room;
         this.priceType = priceType;
@@ -116,6 +121,10 @@ public class Session {
 
     public LocalTime getTime() {
         return time;
+    }
+    
+    public LocalDate getDate() {
+    return date;
     }
 
     public PriceType getPriceType() {

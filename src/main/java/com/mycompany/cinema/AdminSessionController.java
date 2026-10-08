@@ -6,6 +6,7 @@ import com.mycompany.movie.Session;
 import com.mycompany.movie.MovieRepository;
 import com.mycompany.movie.SessionRepository;
 import java.time.LocalTime;
+import java.time.LocalDate;
 import java.util.List;
 import com.mycompany.movie.RoomRepository;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,7 @@ public class AdminSessionController {
 public ResponseEntity<?> createSession(
         @RequestParam int movieId,
         @RequestParam int roomId,
+        @RequestParam String date,
         @RequestParam String time) {
 
     Movie movie = movieRepository.findById(movieId).orElse(null);
@@ -64,6 +66,7 @@ public ResponseEntity<?> createSession(
 
     Session session = new Session(
             movie,
+            LocalDate.parse(date),
             LocalTime.parse(time),
             room,
             priceType
@@ -76,5 +79,9 @@ public ResponseEntity<?> createSession(
     @GetMapping("/rooms")
     public List<Room> getRooms() {
         return roomRepository.findAll();
+}
+    @GetMapping
+    public List<Session> getSessions() {
+        return sessionRepository.findAll();
 }
 }
