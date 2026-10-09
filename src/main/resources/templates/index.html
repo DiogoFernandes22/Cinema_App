@@ -98,10 +98,47 @@
             <div class="movie-card"
                  th:each="movie : ${movies}">
 
-                <div class="poster"
-                     th:text="${movie.name}">
-                    AVATAR
-                </div>
+                <div class="poster">
+    <img
+        class="poster-image"
+        th:if="${movie.name == 'Avatar'}"
+        src=https://image.tmdb.org/t/p/original/gKY6q7SjCkAU6FqvqWybDYgUKIF.jpg
+        alt="Cartaz do filme Avatar">
+
+    <img
+        class="poster-image"
+        th:if="${movie.name == 'Inception'}"
+        src="https://image.tmdb.org/t/p/w500/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg"
+        alt="Cartaz do filme Inception">
+
+    <img
+        class="poster-image"
+        th:if="${movie.name == 'Interstellar'}"
+        src="https://image.tmdb.org/t/p/original/tYaC23U62BOJRNVIlFGT6iowEwj.jpg"
+        alt="Cartaz do filme Interstellar">
+
+    <img
+        class="poster-image"
+        th:if="${movie.name == 'Her'}"
+        src="https://image.tmdb.org/t/p/w500/lEIaL12hSkqqe83kgADkbUqEnvk.jpg"
+        alt="Cartaz do filme Her">
+
+    <img
+        class="poster-image"
+        th:if="${movie.name == 'Dunkirk'}"
+        src="https://image.tmdb.org/t/p/w500/ebSnODDg9lbsMIaWg2uAbjn7TO5.jpg"
+        alt="Cartaz do filme Dunkirk">
+
+    <span class="poster-fallback"
+          th:if="${movie.name != 'Avatar'
+                  and movie.name != 'Inception'
+                  and movie.name != 'Interstellar'
+                  and movie.name != 'Her'
+                  and movie.name != 'Dunkirk'}"
+          th:text="${movie.name}">
+        Nome do filme
+    </span>
+    </div>
 
                 <div class="movie-card-info">
 
