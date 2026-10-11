@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>A minha conta | CineHub</title>
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <a href="/" class="logo" style="text-decoration: none;">
+            CINEHUB
+        </a>
+
+        <nav>
+            <a href="/#filmes">Filmes</a>
+            <a href="/#sessoes">Sessões</a>
+            <a href="/#cinema">O Cinema</a>
+        </nav>
+
+        <form th:action="@{/logout}" method="post">
+            <button class="login-button" type="submit">
+                Terminar sessão
+            </button>
+        </form>
+
+    </header>
+
+
+    <main class="section">
+
+        <div class="section-header">
+            <div>
+                <p class="section-label">ÁREA PESSOAL</p>
+                <h1>A minha conta</h1>
+                <p>
+                    Bem-vindo/a,
+                    <strong th:text="${username}">utilizador</strong>!
+                </p>
+            </div>
+        </div>
+
+
+        
+        <section class="account-profile">
+
+            <h2>Dados da conta</h2>
+
+            <p>
+                <strong>Nome completo:</strong>
+                <span th:text="${fullName != null and !fullName.isBlank()
+                    ? fullName : 'Não indicado'}">
+                    Nome completo
+                </span>
+            </p>
+
+            <p>
+                <strong>E-mail:</strong>
+                <span th:text="${email != null and !email.isBlank()
+                    ? email : 'Não indicado'}">
+                    email@exemplo.pt
+                </span>
+            </p>
+
+            <p>
+                <strong>Nome de utilizador:</strong>
+                <span th:text="${username}">utilizador</span>
+            </p>
+
+        </section>
+
+
+
+        <section class="account-reservations">
+
+            <div class="section-header">
+                <div>
+                    <p class="section-label">CINEHUB</p>
+                    <h2>As minhas reservas</h2>
+                </div>
+            </div>
+
+
+            <div th:if="${reservations.isEmpty()}">
+
+                <h3>Ainda não tens reservas associadas à tua conta.</h3>
+
+                <p>
+                    Explora os filmes em exibição e escolhe uma sessão
+                    para começares.
+                </p>
+
+                <a class="primary-button" href="/#sessoes">
+                    Ver sessões
+                </a>
+
+            </div>
+
+
+            <div th:unless="${reservations.isEmpty()}">
+
+                                <article class="reservation-card"
+                         th:each="reservation : ${reservations}">
+
+                    <header class="reservation-card-header">
+                        <div class="reservation-heading">
+                            <p class="reservation-eyebrow">A TUA RESERVA</p>
+                            <h3 th:text="${reservation.session.movie.name}">
+                                Nome do filme
+                            </h3>
+                            <p class="reservation-session">
+                                <span th:text="${reservation.session.date}">
+                                    Data da sessão
+                                </span>
+                                <span class="reservation-time">
+                                    <span th:text="${#temporals.format(
+                                        reservation.session.time, 'HH:mm')}">
+                                        18:00
+                                    </span>
+                                </span>
+                            </p>
+                        </div>
+
+                        <div class="reservation-statuses">
+                            <span class="reservation-status"
+                                  th:classappend="${reservation.confirmed}
+                                  ? ' status-confirmed' : ' status-pending'"
+                                  th:text="${reservation.confirmed}
+                                  ? 'Confirmada' : 'Por confirmar'">
+                                Confirmada
+                            </span>
+
+                            <span class="reservation-status"
+                                  th:classappend="${reservation.paid}
+                                  ? ' status-paid' : ' status-unpaid'"
+                                  th:text="${reservation.paid}
+                                  ? 'Pago' : 'Por pagar'">
+                                Pago
+                            </span>
+                        </div>
+                    </header>
+
+                    <div class="reservation-details">
+                        <div class="reservation-detail">
+                            <span class="reservation-detail-label">Sala</span>
+                            <strong th:text="${reservation.session.room.name}">
+                                Sala 1
+                            </strong>
+                        </div>
+
+                        <div class="reservation-detail">
+                            <span class="reservation-detail-label">
+                                Método de pagamento
+                            </span>
+                            <strong th:text="${reservation.paymentMethod != null
+                                ? reservation.paymentMethod : 'Não definido'}">
+                                Não definido
+                            </strong>
+                        </div>
+                    </div>
+
+                    <section class="reservation-tickets"
+                             th:if="${reservation.myTickets != null
+                                     and !reservation.myTickets.isEmpty()}">
+
+                        <h4>
+                            <span>Bilhetes e lugares</span>
+                            <span class="reservation-ticket-count"
+                                  th:text="${reservation.myTickets.size()}">
+                                1
+                            </span>
+                        </h4>
+
+                        <ul class="reservation-ticket-list">
+                            <li th:each="ticket : ${reservation.myTickets}">
+                                <span class="ticket-type"
+                                      th:text="${ticket.typeTicket}">
+                                    NORMAL
+                                </span>
+
+                                <span class="ticket-seat">
+                                    Lugar
+                                    <strong th:text="${ticket.seat}">A1</strong>
+                                </span>
+                            </li>
+                        </ul>
+                    </section>
+
+                </article>
+
+            </div>
+
+        </section>
+
+        <p>
+            <a href="/">← Voltar à página principal</a>
+        </p>
+
+    </main>
+
+
+    <footer id="cinema">
+
+        <div class="logo">CINEHUB</div>
+
+        <p>Uma experiência cinematográfica</p>
+
+    </footer>
+
+</body>
+</html>

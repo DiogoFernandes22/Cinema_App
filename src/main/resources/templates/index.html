@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -23,9 +24,45 @@
             <a href="#cinema">O Cinema</a>
         </nav>
 
-        <button class="login-button" type="button">
-            Entrar
-        </button>
+        <!-- Área da conta: depende do estado da autenticação -->
+        <div class="account-area">
+
+            
+            <!-- Utilizador com sessão iniciada -->
+            <div th:if="${loggedIn}">
+                <span>
+                    Olá, <strong th:text="${username}">utilizador</strong>!
+                </span>
+
+                <a th:href="@{/conta}">
+                    A minha conta
+                </a>
+
+                <form th:action="@{/logout}"
+                      method="post"
+                      class="logout-form">
+
+                    <button class="login-button" type="submit">
+                        Terminar sessão
+                    </button>
+
+                </form>
+            </div>
+
+            <!-- Utilizador sem sessão iniciada -->
+            <div th:unless="${loggedIn}">
+
+                <a class="login-button" th:href="@{/login}">
+                    Entrar
+                </a>
+
+                <a th:href="@{/register}">
+                    Criar conta
+                </a>
+
+            </div>
+
+        </div>
 
     </header>
 
@@ -99,46 +136,48 @@
                  th:each="movie : ${movies}">
 
                 <div class="poster">
-    <img
-        class="poster-image"
-        th:if="${movie.name == 'Avatar'}"
-        src=https://image.tmdb.org/t/p/original/gKY6q7SjCkAU6FqvqWybDYgUKIF.jpg
-        alt="Cartaz do filme Avatar">
 
-    <img
-        class="poster-image"
-        th:if="${movie.name == 'Inception'}"
-        src="https://image.tmdb.org/t/p/w500/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg"
-        alt="Cartaz do filme Inception">
+                    <img
+                        class="poster-image"
+                        th:if="${movie.name == 'Avatar'}"
+                        src="https://image.tmdb.org/t/p/original/gKY6q7SjCkAU6FqvqWybDYgUKIF.jpg"
+                        alt="Cartaz do filme Avatar">
 
-    <img
-        class="poster-image"
-        th:if="${movie.name == 'Interstellar'}"
-        src="https://image.tmdb.org/t/p/original/tYaC23U62BOJRNVIlFGT6iowEwj.jpg"
-        alt="Cartaz do filme Interstellar">
+                    <img
+                        class="poster-image"
+                        th:if="${movie.name == 'Inception'}"
+                        src="https://image.tmdb.org/t/p/w500/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg"
+                        alt="Cartaz do filme Inception">
 
-    <img
-        class="poster-image"
-        th:if="${movie.name == 'Her'}"
-        src="https://image.tmdb.org/t/p/w500/lEIaL12hSkqqe83kgADkbUqEnvk.jpg"
-        alt="Cartaz do filme Her">
+                    <img
+                        class="poster-image"
+                        th:if="${movie.name == 'Interstellar'}"
+                        src="https://image.tmdb.org/t/p/original/tYaC23U62BOJRNVIlFGT6iowEwj.jpg"
+                        alt="Cartaz do filme Interstellar">
 
-    <img
-        class="poster-image"
-        th:if="${movie.name == 'Dunkirk'}"
-        src="https://image.tmdb.org/t/p/w500/ebSnODDg9lbsMIaWg2uAbjn7TO5.jpg"
-        alt="Cartaz do filme Dunkirk">
+                    <img
+                        class="poster-image"
+                        th:if="${movie.name == 'Her'}"
+                        src="https://image.tmdb.org/t/p/w500/lEIaL12hSkqqe83kgADkbUqEnvk.jpg"
+                        alt="Cartaz do filme Her">
 
-    <span class="poster-fallback"
-          th:if="${movie.name != 'Avatar'
-                  and movie.name != 'Inception'
-                  and movie.name != 'Interstellar'
-                  and movie.name != 'Her'
-                  and movie.name != 'Dunkirk'}"
-          th:text="${movie.name}">
-        Nome do filme
-    </span>
-    </div>
+                    <img
+                        class="poster-image"
+                        th:if="${movie.name == 'Dunkirk'}"
+                        src="https://image.tmdb.org/t/p/w500/ebSnODDg9lbsMIaWg2uAbjn7TO5.jpg"
+                        alt="Cartaz do filme Dunkirk">
+
+                    <span class="poster-fallback"
+                          th:if="${movie.name != 'Avatar'
+                                  and movie.name != 'Inception'
+                                  and movie.name != 'Interstellar'
+                                  and movie.name != 'Her'
+                                  and movie.name != 'Dunkirk'}"
+                          th:text="${movie.name}">
+                        Nome do filme
+                    </span>
+
+                </div>
 
                 <div class="movie-card-info">
 
@@ -315,7 +354,8 @@
         </p>
 
     </footer>
-    
+
+
     <script>
     document.addEventListener('click', function (event) {
         const link = event.target.closest('.session-date-option');

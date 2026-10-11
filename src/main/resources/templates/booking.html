@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -7,6 +8,103 @@
     <title>CineHub - Compra</title>
 
     <link rel="stylesheet" href="/style.css">
+
+    <style>
+        .seats {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin: 25px 0;
+        }
+
+        .seats > div {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .seat-button {
+            min-width: 35px;
+            min-height: 35px;
+            padding: 5px;
+            border: none;
+            border-radius: 6px;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .seat-button:hover:not(:disabled) {
+            background-color: #388e3c;
+        }
+
+        .seat-button.selected {
+            background-color: #1976d2;
+        }
+
+        .seat-button.occupied {
+            background-color: #888888;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .seat-legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin: 20px 0;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .legend-free {
+            background-color: #4caf50;
+        }
+
+        .legend-selected {
+            background-color: #1976d2;
+        }
+
+        .legend-occupied {
+            background-color: #888888;
+        }
+
+        .screen-label {
+            max-width: 500px;
+            width: 90%;
+            margin: 25px auto;
+            padding: 10px;
+            text-align: center;
+            background-color: #dddddd;
+            color: #333333;
+            border-radius: 8px;
+            letter-spacing: 3px;
+        }
+
+        .seat-message {
+            text-align: center;
+            margin: 12px 0;
+        }
+
+        .seat-button:focus-visible {
+            outline: 3px solid #ffbf47;
+            outline-offset: 2px;
+        }
+    </style>
 </head>
 
 <body>
@@ -22,7 +120,7 @@
             <a href="/">O Cinema</a>
         </nav>
 
-        <button class="login-button">
+        <button class="login-button" type="button">
             Entrar
         </button>
     </header>
@@ -37,7 +135,6 @@
         </div>
 
         <div class="session">
-
             <div>
                 <h3 th:text="${movieSession.movie.name}">
                     Avatar
@@ -51,48 +148,119 @@
                     Hora: 21:00
                 </p>
             </div>
-
         </div>
-        
+
         <form id="bookingForm" action="/reserve" method="get">
-            
+
+            <!-- Mensagem de erro enviada pelo controlador -->
+            <div class="booking-error"
+                 th:if="${bookingError != null}"
+                 role="alert">
+                <strong>Não foi possível continuar a reserva</strong>
+                <p th:text="${bookingError}">
+                    Ocorreu um problema com a seleção dos lugares.
+                </p>
+            </div>
+
             <!-- Sessão escolhida -->
-            <input type="hidden" name="sessionId" th:value="${movieSession.id}">
-            
-        <h2>Tipo de bilhete</h2>
-        <!-- action é para onde os dados serão enviados e o method como são enviados -->
-          
-            <label> 
+            <input type="hidden"
+                   name="sessionId"
+                   th:value="${movieSession.id}">
+
+            <h2>Tipo de bilhete</h2>
+
+            <label>
                 Normal - 8€
-                <!-- Quando o formulário for enviado o browser precisa de saber como se chama o valor que está a enviar. Se o utilizador escolher 2 o pedido fica normal=2 -->
-                <input type="number" name="normal" value="0" min="0" id="normal">
+                <input type="number"
+                       name="normal"
+                       value="0"
+                       min="0"
+                       step="1"
+                       id="normal">
             </label>
+
             <label>
                 Estudante - 6€
-                <input type="number" name="estudante" value="0" min="0" id="estudante">
+                <input type="number"
+                       name="estudante"
+                       value="0"
+                       min="0"
+                       step="1"
+                       id="estudante">
             </label>
+
             <label>
                 Criança - 4,50€
-                <input type="number" name="crianca" value="0" min="0" id="crianca">
+                <input type="number"
+                       name="crianca"
+                       value="0"
+                       min="0"
+                       step="1"
+                       id="crianca">
             </label>
-            
-        <h2>Escolher lugares </h2>
-        
-        <p>Lugares a escolher: <span id="totalSeats">0</span></p>
-        
-        <div class="seats">
-            
-            <div th:each="row : ${movieSession.room.GetSeats()}">
-                
-                <button th:each="seat : ${row}" type="button" class="seat-button" th:text="${seat}" th:attr="data-seat=${seat}">A1</button>
-                
+
+            <h2>Escolher lugares</h2>
+
+            <p class="seat-message">
+                Lugares necessários:
+                <span id="totalSeats">0</span>
+            </p>
+
+            <p class="seat-message">
+                Lugares selecionados:
+                <span id="selectedSeatsCount">0</span>
+            </p>
+
+            <div class="seat-legend">
+                <div class="legend-item">
+                    <span class="legend-color legend-free"></span>
+                    <span>Livre</span>
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-color legend-selected"></span>
+                    <span>Selecionado</span>
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-color legend-occupied"></span>
+                    <span>Ocupado</span>
+                </div>
             </div>
-        </div>
-        
-        <!-- Aqui ficam guardados os lugares escolhidos -->
-        <input type="hidden" name="seats" id="selectedSeats">
-        
-        <button type="submit">Confirmar compra</button>
+
+            <div class="screen-label">
+                ECRÃ
+            </div>
+
+            <div class="seats">
+
+                <div th:each="row : ${movieSession.room.GetSeats()}">
+
+                    <button
+                        th:each="seat : ${row}"
+                        type="button"
+                        class="seat-button"
+                        th:text="${seat}"
+                        th:attr="data-seat=${seat}"
+                        th:disabled="${seat != null and occupiedSeats.contains(seat)}"
+                        th:classappend="${seat != null and occupiedSeats.contains(seat)} ? ' occupied' : ''"
+                        th:title="${seat != null and occupiedSeats.contains(seat)} ? 'Lugar ocupado' : 'Lugar livre'">
+                        A1
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- Lugares escolhidos enviados ao controlador -->
+            <input type="hidden"
+                   name="seats"
+                   id="selectedSeats">
+
+            <button type="submit">
+                Confirmar compra
+            </button>
+
         </form>
 
     </main>
@@ -101,92 +269,125 @@
         <div class="logo">CINEHUB</div>
         <p>Uma experiência cinematográfica</p>
     </footer>
-    
+
     <script>
         const normalInput = document.getElementById("normal");
         const estudanteInput = document.getElementById("estudante");
         const criancaInput = document.getElementById("crianca");
-        
+
         const totalSeatsElement = document.getElementById("totalSeats");
-        const selectedSeatsInput = document.getElementById("selectedSeats");
-        
+        const selectedSeatsCountElement =
+            document.getElementById("selectedSeatsCount");
+
+        const selectedSeatsInput =
+            document.getElementById("selectedSeats");
+
+        const bookingForm = document.getElementById("bookingForm");
         const seatButtons = document.querySelectorAll(".seat-button");
-        
+
         let selectedSeats = [];
-        
-        function updateTotalSeats(){
-            
-            const normal = parseInt(normalInput.value) || 0;
-            const estudante = parseInt(estudanteInput.value) || 0;
-            const crianca = parseInt(criancaInput.value) || 0;
-            
-            const total = normal + estudante + crianca;
-            
+
+        function getTicketTotal() {
+            const normal = Math.max(0, parseInt(normalInput.value, 10) || 0);
+            const estudante = Math.max(0, parseInt(estudanteInput.value, 10) || 0);
+            const crianca = Math.max(0, parseInt(criancaInput.value, 10) || 0);
+
+            return normal + estudante + crianca;
+        }
+
+        function updateSelectedSeats() {
+            selectedSeatsInput.value = selectedSeats.join(",");
+            selectedSeatsCountElement.textContent = selectedSeats.length;
+        }
+
+        function updateTotalSeats() {
+            const total = getTicketTotal();
+
             totalSeatsElement.textContent = total;
-            
-            //Se o número de bilhetes diminuir, retirar lugares que já não são necessários
-            if(selectedSeats.length > total){
-                
-                selectedSeats = selectedSeats.slice(0, total);
-                
+
+            // Se forem necessários menos lugares, remover as últimas seleções.
+            while (selectedSeats.length > total) {
+                const removedSeat = selectedSeats.pop();
+
                 seatButtons.forEach(button => {
-                    
-                    if(!selectedSeats.includes(button.dataset.seat)){
+                    if (button.dataset.seat === removedSeat) {
                         button.classList.remove("selected");
                     }
                 });
-                
-                selectedSeatsInput.value = selectedSeats.join(",");
             }
+
+            updateSelectedSeats();
         }
-        
+
         normalInput.addEventListener("input", updateTotalSeats);
         estudanteInput.addEventListener("input", updateTotalSeats);
         criancaInput.addEventListener("input", updateTotalSeats);
-        
+
         seatButtons.forEach(button => {
-            
-            button.addEventListener("click", function() {
-                
-                const seat = this.dataset.seat;
-                
-                //se o lugar já está selecionado
-                if(selectedSeats.includes(seat)) {
-                    
-                    selectedSeats = selectedSeats.filter(
-                            selectedSeat => selectedSeat !== seat);
-                    
-                    this.classList.remove("selected");
+            button.addEventListener("click", function () {
+                // Os lugares ocupados estão desativados.
+                if (this.disabled) {
+                    return;
                 }
-                
-                else{
-                    
-                    const totalSeats = parseInt(totalSeatsElement.textContent);
-                    
-                    //Não existem bilhetes selecionados
-                    if(totalSeats === 0){
+
+                const seat = this.dataset.seat;
+
+                if (!seat) {
+                    return;
+                }
+
+                if (selectedSeats.includes(seat)) {
+                    selectedSeats = selectedSeats.filter(
+                        selectedSeat => selectedSeat !== seat
+                    );
+
+                    this.classList.remove("selected");
+                } else {
+                    const totalSeats = getTicketTotal();
+
+                    if (totalSeats === 0) {
                         alert("Escolha primeiro o número de bilhetes.");
                         return;
                     }
-                    
-                    if(selectedSeats.length >= totalSeats){
-                        alert("Já selecionou todos os lugares necessários");
+
+                    if (selectedSeats.length >= totalSeats) {
+                        alert("Já selecionou todos os lugares necessários.");
                         return;
                     }
-                    
-                    //Adicionar lugar
+
                     selectedSeats.push(seat);
-                    
                     this.classList.add("selected");
                 }
-                
-                //Atualizar input hidden
-                selectedSeatsInput.value = selectedSeats.join(",");
-                
-                console.log("Lugares selecionados:", selectedSeats);
+
+                updateSelectedSeats();
             });
         });
-        </script>
+
+        bookingForm.addEventListener("submit", function (event) {
+            const totalSeats = getTicketTotal();
+
+            if (totalSeats <= 0) {
+                event.preventDefault();
+                alert("Escolha pelo menos um bilhete.");
+                return;
+            }
+
+            if (selectedSeats.length !== totalSeats) {
+                event.preventDefault();
+
+                alert(
+                    "Deve selecionar exatamente " +
+                    totalSeats +
+                    " lugar(es) antes de confirmar a compra."
+                );
+                return;
+            }
+
+            updateSelectedSeats();
+        });
+
+        updateTotalSeats();
+    </script>
 
 </body>
 </html>

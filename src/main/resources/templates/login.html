@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="pt-PT" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar | CineHub</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+
+    <main class="register-container">
+        <h1>Entrar no CineHub</h1>
+        <p>Inicia sessão na tua conta.</p>
+
+        <p th:if="${param.error}"
+           role="alert"
+           style="color: #c62828;">
+            Nome de utilizador ou palavra-passe incorretos.
+        </p>
+
+        <p th:if="${param.logout}">
+            Terminaste a sessão com sucesso.
+        </p>
+
+        <p th:if="${success != null}"
+           th:text="${success}"
+           role="status"
+           style="color: #2e7d32;">
+        </p>
+
+        <form th:action="@{/login}" method="post">
+
+            <!-- Token de segurança CSRF -->
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
+            <div>
+                <label for="username">Nome de utilizador</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    autocomplete="username"
+                    required>
+            </div>
+
+            <div>
+                <label for="password">Palavra-passe</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    autocomplete="current-password"
+                    required>
+            </div>
+
+            <button type="submit">Entrar</button>
+        </form>
+
+        <p>
+            Ainda não tens conta?
+            <a th:href="@{/register}">Criar conta</a>
+        </p>
+
+        <p>
+            <a th:href="@{/}">Voltar ao início</a>
+        </p>
+    </main>
+
+</body>
+</html>

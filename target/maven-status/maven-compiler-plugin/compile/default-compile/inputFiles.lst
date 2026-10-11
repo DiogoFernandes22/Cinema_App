@@ -1,14 +1,18 @@
+C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\cinema\AccountController.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\cinema\AdminSessionController.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\cinema\CinemaApplication.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\cinema\DataBaseTest.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\cinema\HomeController.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\cinema\MovieItem.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\cinema\RoomItem.java
+C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\cinema\SecurityConfig.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\cinema\SessionItem.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\cinema\StaffApplication.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\cinema\TmdbMovie.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\cinema\TmdbService.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\cinema\TmdbTest.java
+C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\cinema\UserController.java
+C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\cinema\UserService.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\Director.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\DirectorRepository.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\Genre.java
@@ -33,3 +37,4 @@ C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\StudioReposi
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\Ticket.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\TicketRepository.java
 C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\User.java
+C:\Users\diogo\Desktop\Cinema_App\src\main\java\com\mycompany\movie\UserRepository.java

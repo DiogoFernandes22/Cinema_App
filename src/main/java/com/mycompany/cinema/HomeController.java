@@ -1,3 +1,4 @@
+
 package com.mycompany.cinema;
 
 import com.mycompany.movie.Movie;
@@ -5,6 +6,7 @@ import com.mycompany.movie.Room;
 import com.mycompany.movie.Session;
 import com.mycompany.movie.Reservation;
 import com.mycompany.movie.Seat;
+import com.mycompany.movie.Ticket;
 import com.mycompany.movie.PriceType;
 import com.mycompany.movie.Director;
 import com.mycompany.movie.Studio;
@@ -13,6 +15,8 @@ import com.mycompany.movie.SessionRepository;
 import com.mycompany.movie.ReservationRepository;
 import com.mycompany.movie.TicketRepository;
 import com.mycompany.movie.RoomRepository;
+import com.mycompany.movie.User;
+import com.mycompany.movie.UserRepository;
 
 import java.time.LocalTime;
 import java.time.LocalDate;
@@ -29,6 +33,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Controller
 public class HomeController {
@@ -38,25 +45,35 @@ public class HomeController {
     private final ReservationRepository reservationRepository;
     private final TicketRepository ticketRepository;
     private final RoomRepository roomRepository;
+    private final UserRepository userRepository;
 
     public HomeController(
             MovieRepository movieRepository,
             SessionRepository sessionRepository,
             ReservationRepository reservationRepository,
             TicketRepository ticketRepository,
-            RoomRepository roomRepository) {
+            RoomRepository roomRepository,
+            UserRepository userRepository) {
 
         this.movieRepository = movieRepository;
         this.sessionRepository = sessionRepository;
         this.reservationRepository = reservationRepository;
         this.ticketRepository = ticketRepository;
         this.roomRepository = roomRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/")
     public String home(
             @RequestParam(name = "date", required = false) String dateParam,
-            Model model) {
+            Model model,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        model.addAttribute("loggedIn", userDetails != null);
+
+        if (userDetails != null) {
+            model.addAttribute("username", userDetails.getUsername());
+        }
 
         List<Session> sessions = sessionRepository.findAll();
 
@@ -74,15 +91,12 @@ public class HomeController {
 
         LocalDate today = LocalDate.now();
 
-        // Preparar os próximos 7 dias para a barra de seleção.
         List<LocalDate> availableDates = new ArrayList<>();
 
         for (int i = 0; i < 7; i++) {
             availableDates.add(today.plusDays(i));
         }
 
-        // Por defeito, escolher hoje se houver sessões.
-        // Caso contrário, escolher a próxima data com sessões.
         LocalDate selectedDate = null;
 
         if (dateParam != null && !dateParam.isBlank()) {
@@ -106,7 +120,6 @@ public class HomeController {
                     .orElse(today);
         }
 
-        // Obter apenas as sessões da data selecionada.
         LocalDate finalSelectedDate = selectedDate;
 
         List<Session> sessionsForSelectedDate =
@@ -118,7 +131,6 @@ public class HomeController {
                         .sorted(Comparator.comparing(Session::getTime))
                         .toList();
 
-        // Organizar as sessões por filme e sala.
         Map<String, Map<String, List<Session>>> selectedDateSchedule =
                 new LinkedHashMap<>();
 
@@ -139,7 +151,6 @@ public class HomeController {
                     .add(session);
         }
 
-        // Indicar ao HTML quais dias têm sessões.
         Map<LocalDate, Boolean> datesWithSessions = new LinkedHashMap<>();
 
         for (LocalDate date : availableDates) {
@@ -236,26 +247,19 @@ public class HomeController {
             return "redirect:/";
         }
 
-        System.out.println(
-                "Sala: " + selectedSession.getRoom().getName()
-        );
+        List<Seat> occupiedSeats = new ArrayList<>();
 
-        System.out.println(
-                "Lugares: "
-                + selectedSession.getRoom().GetSeats().length
-        );
+        List<Ticket> tickets =
+                ticketRepository.findBySessionId(selectedSession.getId());
 
-        System.out.println(
-                "Primeiro lugar: "
-                + selectedSession.getRoom().GetSeats()[0][0]
-        );
-
-        System.out.println(
-                "Último lugar: "
-                + selectedSession.getRoom().GetSeats()[9][11]
-        );
+        for (Ticket ticket : tickets) {
+            if (ticket.getSeat() != null) {
+                occupiedSeats.add(ticket.getSeat());
+            }
+        }
 
         model.addAttribute("movieSession", selectedSession);
+        model.addAttribute("occupiedSeats", occupiedSeats);
 
         return "booking";
     }
@@ -268,13 +272,9 @@ public class HomeController {
             @RequestParam("crianca") int crianca,
             @RequestParam("seats") String seats,
             Model model,
-            HttpSession httpSession) {
-
-        System.out.println("Sessão: " + sessionId);
-        System.out.println("Lugares escolhidos: " + seats);
-        System.out.println("Normal: " + normal);
-        System.out.println("Estudante: " + estudante);
-        System.out.println("Criança: " + crianca);
+            HttpSession httpSession,
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal UserDetails userDetails) {
 
         Session selectedSession =
                 sessionRepository.findById(sessionId).orElse(null);
@@ -283,10 +283,27 @@ public class HomeController {
             return "redirect:/";
         }
 
-        Reservation reservation =
-                new Reservation(selectedSession, null);
+        if (normal < 0 || estudante < 0 || crianca < 0) {
+            redirectAttributes.addFlashAttribute(
+                    "bookingError",
+                    "As quantidades de bilhetes não são válidas."
+            );
 
-        ArrayList<String> ticketTypes = new ArrayList<>();
+            return "redirect:/session?id=" + sessionId;
+        }
+
+        int totalTickets = normal + estudante + crianca;
+
+        if (totalTickets <= 0 || seats == null || seats.isBlank()) {
+            redirectAttributes.addFlashAttribute(
+                    "bookingError",
+                    "Escolha os bilhetes e os respetivos lugares."
+            );
+
+            return "redirect:/session?id=" + sessionId;
+        }
+
+        List<String> ticketTypes = new ArrayList<>();
 
         for (int i = 0; i < normal; i++) {
             ticketTypes.add("NORMAL");
@@ -300,45 +317,106 @@ public class HomeController {
             ticketTypes.add("CRIANÇA");
         }
 
-        String[] selectedSeats = seats.split(",");
+        String[] selectedSeatNames = seats.split(",", -1);
 
-        for (int i = 0; i < selectedSeats.length; i++) {
+        if (selectedSeatNames.length != totalTickets) {
+            redirectAttributes.addFlashAttribute(
+                    "bookingError",
+                    "O número de lugares deve corresponder ao número de bilhetes."
+            );
 
-            String seatName = selectedSeats[i];
-
-            for (Seat[] row : selectedSession.getRoom().GetSeats()) {
-
-                for (Seat seat : row) {
-
-                    if (seat.toString().equals(seatName)) {
-
-                        boolean occupied =
-                                ticketRepository.existsBySessionIdAndSeatId(
-                                        selectedSession.getId(),
-                                        seat.getId()
-                                );
-
-                        if (occupied) {
-                            System.out.println(
-                                    "Lugar " + seatName + " já está ocupado."
-                            );
-                            continue;
-                        }
-
-                        if (i >= ticketTypes.size()) {
-                            continue;
-                        }
-
-                        String ticketType = ticketTypes.get(i);
-
-                        reservation.addTicket(ticketType, seat);
-                    }
-                }
-            }
+            return "redirect:/session?id=" + sessionId;
         }
 
-        if (reservation.getMyTickets().isEmpty()) {
-            return "redirect:/";
+        List<Seat> seatsToReserve = new ArrayList<>();
+
+        for (String seatName : selectedSeatNames) {
+
+            seatName = seatName.trim();
+
+            if (seatName.isEmpty()) {
+                redirectAttributes.addFlashAttribute(
+                        "bookingError",
+                        "A seleção de lugares não é válida."
+                );
+
+                return "redirect:/session?id=" + sessionId;
+            }
+
+            for (Seat selectedSeat : seatsToReserve) {
+                if (selectedSeat.toString().equals(seatName)) {
+                    redirectAttributes.addFlashAttribute(
+                            "bookingError",
+                            "Não pode selecionar o mesmo lugar mais do que uma vez."
+                    );
+
+                    return "redirect:/session?id=" + sessionId;
+                }
+            }
+
+            Seat matchingSeat = null;
+
+            for (Seat[] row : selectedSession.getRoom().GetSeats()) {
+                for (Seat seat : row) {
+
+                    if (seat != null && seat.toString().equals(seatName)) {
+                        matchingSeat = seat;
+                        break;
+                    }
+                }
+
+                if (matchingSeat != null) {
+                    break;
+                }
+            }
+
+            if (matchingSeat == null) {
+                redirectAttributes.addFlashAttribute(
+                        "bookingError",
+                        "Um dos lugares selecionados não existe nesta sala."
+                );
+
+                return "redirect:/session?id=" + sessionId;
+            }
+
+            boolean occupied =
+                    ticketRepository.existsBySessionIdAndSeatId(
+                            selectedSession.getId(),
+                            matchingSeat.getId()
+                    );
+
+            if (occupied) {
+                redirectAttributes.addFlashAttribute(
+                        "bookingError",
+                        "O lugar " + seatName
+                        + " já foi reservado. Escolha outros lugares."
+                );
+
+                return "redirect:/session?id=" + sessionId;
+            }
+
+            seatsToReserve.add(matchingSeat);
+        }
+
+        // Procurar o utilizador autenticado.
+        // Se não houver sessão iniciada, a reserva permanece anónima.
+        User user = null;
+
+        if (userDetails != null) {
+            user = userRepository
+                    .findByUsername(userDetails.getUsername())
+                    .orElse(null);
+        }
+
+        // Criar a reserva associada ao utilizador, quando existe.
+        Reservation reservation =
+                new Reservation(selectedSession, user);
+
+        for (int i = 0; i < seatsToReserve.size(); i++) {
+            reservation.addTicket(
+                    ticketTypes.get(i),
+                    seatsToReserve.get(i)
+            );
         }
 
         reservationRepository.save(reservation);

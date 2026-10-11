@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-PT" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar conta | CineHub</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+
+    <main class="register-container">
+        <h1>Criar conta CineHub</h1>
+        <p>Cria uma conta para poderes aceder ao CineHub.</p>
+
+        <p th:if="${error != null}"
+           th:text="${error}"
+           role="alert"
+           class="register-error">
+        </p>
+
+        <form th:action="@{/register}" method="post">
+
+            <!-- Token de segurança CSRF -->
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
+            <div>
+                <label for="fullName">Nome completo</label>
+                <input
+                    type="text"
+                    id="fullName"
+                    name="fullName"
+                    maxlength="150"
+                    autocomplete="name"
+                    required>
+            </div>
+
+            <div>
+                <label for="email">E-mail</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    maxlength="255"
+                    autocomplete="email"
+                    required>
+            </div>
+
+            <div>
+                <label for="username">Nome de utilizador</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    maxlength="100"
+                    autocomplete="username"
+                    required>
+            </div>
+
+            <div>
+                <label for="password">Palavra-passe</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    minlength="8"
+                    autocomplete="new-password"
+                    required>
+            </div>
+
+            <div>
+                <label for="confirmPassword">Confirmar palavra-passe</label>
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    minlength="8"
+                    autocomplete="new-password"
+                    required>
+            </div>
+
+            <button type="submit">Criar conta</button>
+        </form>
+
+        <p>
+            Já tens conta?
+            <a th:href="@{/login}">Entrar</a>
+        </p>
+
+        <p>
+            <a th:href="@{/}">Voltar ao início</a>
+        </p>
+    </main>
+
+</body>
+</html>
