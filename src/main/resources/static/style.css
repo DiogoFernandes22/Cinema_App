@@ -2093,3 +2093,34 @@ body:has(.account-reservations) > footer .logo {
     }
 }
 
+
+/* Botões Entrar e Criar conta na página inicial */
+.navbar .account-area > div:last-child {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+.navbar .account-area a.login-button,
+.navbar .account-area > div a[href="/register"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 10px 20px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    color: var(--text);
+    background: transparent;
+    text-decoration: none;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.navbar .account-area a.login-button:hover,
+.navbar .account-area > div a[href="/register"]:hover {
+    border-color: var(--accent);
+    background: rgba(233, 185, 94, 0.06);
+}
+
+

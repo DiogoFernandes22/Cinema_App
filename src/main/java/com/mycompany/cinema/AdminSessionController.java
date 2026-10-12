@@ -11,6 +11,10 @@ import java.util.List;
 import com.mycompany.movie.RoomRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.mycompany.movie.TicketRepository;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 @RestController
 @RequestMapping("/api/admin/sessions")
@@ -19,15 +23,18 @@ public class AdminSessionController {
     private final MovieRepository movieRepository;
     private final SessionRepository sessionRepository;
     private final RoomRepository roomRepository;
+    private final TicketRepository ticketRepository;
 
     public AdminSessionController(
         MovieRepository movieRepository,
         SessionRepository sessionRepository,
-        RoomRepository roomRepository) {
+        RoomRepository roomRepository,
+         TicketRepository ticketRepository) {
 
     this.movieRepository = movieRepository;
     this.sessionRepository = sessionRepository;
     this.roomRepository = roomRepository;
+    this.ticketRepository = ticketRepository;
 }
 
     @GetMapping("/movies")
@@ -83,5 +90,31 @@ public ResponseEntity<?> createSession(
     @GetMapping
     public List<Session> getSessions() {
         return sessionRepository.findAll();
+}
+    @GetMapping("/lotacao")
+public List<Map<String, Object>> getSessionsWithOccupancy() {
+    List<Session> sessions = sessionRepository.findAll();
+    List<Map<String, Object>> result = new ArrayList<>();
+
+    for (Session session : sessions) {
+        int capacity = session.getRoom().getCapacity();
+        int registeredTickets =
+                ticketRepository.findBySessionId(session.getId()).size();
+
+        Map<String, Object> item = new LinkedHashMap<>();
+        item.put("id", session.getId());
+        item.put("movie", session.getMovie().getName());
+        item.put("date", session.getDate());
+        item.put("time", session.getTime());
+        item.put("room", session.getRoom().getName());
+        item.put("capacity", capacity);
+        item.put("registeredTickets", registeredTickets);
+        item.put("availableSeats",
+                Math.max(0, capacity - registeredTickets));
+
+        result.add(item);
+    }
+
+    return result;
 }
 }

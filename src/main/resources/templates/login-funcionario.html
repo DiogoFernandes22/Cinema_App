@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login de Funcionários | CineHub</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+    <main>
+        <h1>Área de Funcionários</h1>
+        <p>Inicia sessão com as tuas credenciais de funcionário.</p>
+
+        <p th:if="${param.error}" style="color: red;">
+            Nome de utilizador ou palavra-passe inválidos.
+        </p>
+
+        <p th:if="${param.logout}">
+            Sessão terminada com sucesso.
+        </p>
+
+        <form th:action="@{/funcionario/login}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
+            <div>
+                <label for="username">Nome de utilizador</label>
+                <input type="text" id="username" name="username"
+                       required autocomplete="username">
+            </div>
+
+            <div>
+                <label for="password">Palavra-passe</label>
+                <input type="password" id="password" name="password"
+                       required autocomplete="current-password">
+            </div>
+
+            <button type="submit">Iniciar sessão</button>
+        </form>
+
+        <p><a th:href="@{/}">Voltar ao CineHub</a></p>
+    </main>
+</body>
+</html>

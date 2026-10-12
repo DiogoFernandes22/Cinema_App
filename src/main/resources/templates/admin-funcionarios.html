@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Funcionários | CineHub</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+    <main class="container">
+        <h1>Gestão de Funcionários</h1>
+
+        <p>Consulta os funcionários registados no CineHub.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Utilizador</th>
+                    <th>Estado</th>
+                    <th>Função</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="funcionario : ${funcionarios}">
+                    <td th:text="${funcionario.id}"></td>
+                    <td th:text="${funcionario.nome}"></td>
+                    <td th:text="${funcionario.username}"></td>
+                    <td th:text="${funcionario.ativo ? 'Ativo' : 'Inativo'}"></td>
+                    <td th:text="${funcionario.role}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(funcionarios)}">
+                    <td colspan="5">Não existem funcionários registados.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>
+            <a th:href="@{/}">Voltar à página inicial</a>
+        </p>
+    </main>
+</body>
+</html>

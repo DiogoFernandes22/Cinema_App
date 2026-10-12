@@ -87,4 +87,10 @@ public class UserController {
     public String loginPage() {
         return "login";
     }
+    
+    @GetMapping("/funcionario/login")
+    public String funcionarioLoginPage() {
+        return "login-funcionario";
+    }
 }
+
