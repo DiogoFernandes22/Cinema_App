@@ -60,3 +60,4 @@ public class Main {
 // Lista de filmes:  http://localhost:8080/movies
 // Criar Sessão: http://localhost:8080/admin/sessions/create
 // Busca no TMDB: http://localhost:8080/admin/movies/search?title=Interstellar
+// Utilizador: marepen
